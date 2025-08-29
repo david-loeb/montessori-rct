@@ -1,0 +1,201 @@
+---
+title: Montessori Study Main Tables & Figure
+echo: false
+output-file: "tables_figures_main"
+output-ext: "pdf"
+format: 
+  pdf:
+    include-in-header: 
+      text: |
+        \usepackage{siunitx}
+        \sisetup{
+          input-open-uncertainty = , 
+          input-close-uncertainty = ,
+          table-align-text-pre = false,
+          table-align-text-post = false,
+          detect-all = true
+        }
+        \newcolumntype{d}{S[table-format=3.3, table-space-text-post={-}]}
+        \newcolumntype{n}{S[table-format=3.0, table-space-text-post={-}]}
+        \newcolumntype{g}{S[table-format=3.1, table-space-text-post={-}]}
+        \renewcommand{\arraystretch}{1.1}
+---
+
+::: {.content-hidden}
+Render this file to produce a PDF of the results tables and figure from the main article. Two versions of the figure are produced, a large and a medium-sized version. The resulting PDF will be in the 'output/tables_figures' folder. Package installation and loading is handled with the `pacman` package rather than `pak` for simplicity. `pacman::p_load()` will install any package not already installed and do nothing otherwise (i.e., it will not update already-installed packages). It will also load all packages.
+:::
+
+```{r}
+#| label: setup
+pacman::p_load(
+  readr, dplyr, stringr, tidyr, purrr, kableExtra, glue, ggplot2, patchwork
+)
+source("0_functions_results.R")
+options(knitr.kable.NA = "")
+showtext::showtext_auto()
+showtext::showtext_opts(dpi = 1200)
+sysfonts::font_add_google("Roboto", "Roboto")
+foot_stars <- "** p < .01, * p < .05, + p < .1"
+```
+
+::: {.content-hidden}
+# Tables
+
+## Table 1: Baseline Covariate Equivalence
+:::
+
+```{r}
+#| label: tbl-bl-equiv-covs
+#| tbl-cap: "Baseline Sample Characteristics and Equivalence"
+read_csv(
+  "../output/equivalence/covariates.csv", show_col_types = F, progress = F
+) |> 
+  filter(y != "racemultiother") |> 
+  mutate(
+    y = factor(
+      y, levels = c(
+        "female", "hispanic", "asian", "black", "white", "racemulti", "raceother",
+        "primary_lang_english", "age_study", "income_over_75k", 
+        "caregiver_bachelors", "caregiver_married", "household_size"
+      )
+    )
+  ) |> 
+  arrange(y) |> 
+  make_results_tbl(
+    .means_unadj = T, .sd = T, .means = T, .g = T, .g_se = T,
+    col_headers = c(" ", "Unadjusted" = 2, "Cluster-Adjusted" = 4)
+  ) |> 
+  group_rows("Child Characteristics", 1, 18, bold = F, italic = T) |> 
+  group_rows("Family Characteristics", 19, 26, bold = F, italic = T)
+```
+
+::: {.content-hidden}
+## Table 2: Baseline Outcome Equivalence
+:::
+
+```{r}
+#| label: tbl-bl-equiv-y
+#| tbl-cap: "Baseline Differences in Outcome Measures Before and After Multiple Imputation"
+read_csv(
+  "../output/equivalence/outcomes_k_full-stats.csv", 
+  show_col_types = F, progress = F
+) |> 
+  mutate(spec = ifelse(mod == "cc", "compcase", "imp")) |> 
+  make_results_tbl(
+    .means = T, .g = T, .g_se = T, 
+    spec_col = "spec",
+    col_headers = c(" ", "Complete Case" = 4, "Multiple Imputation" = 4)
+  )
+```
+
+::: {.content-hidden}
+## Table 3: Results Multiple Imputation
+:::
+
+```{r}
+#| label: tbl-res-imp
+#| tbl-cap: "ITT and CACE Estimates at End of Kindergarten, Multiple Imputation"
+bind_rows(
+  read_csv('../output/k/imp_itt.csv', show_col_types = F, progress = F) |> 
+    mutate(spec = "itt"),
+  read_csv('../output/k/imp_cace.csv', show_col_types = F, progress = F) |> 
+    mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4)
+  )
+```
+
+::: {.content-hidden}
+## Table 4: Results Complete Case
+:::
+
+```{r}
+#| label: tbl-res-cc
+#| tbl-cap: "ITT and CACE Estimates at End of Kindergarten, Complete Cases"
+bind_rows(
+  read_csv('../output/k/cc_itt.csv', show_col_types = F, progress = F) |> 
+    mutate(spec = "itt"),
+  read_csv('../output/k/cc_cace.csv', show_col_types = F, progress = F) |> 
+    mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4)
+  )
+```
+
+::: {.content-hidden}
+# Figure 1: Effect Size Plot
+
+Setup
+:::
+
+```{r}
+df <- bind_rows(
+  read_csv("../output/k/imp_itt.csv", show_col_types = F, progress = F) |> 
+    mutate(wave = "k"),
+  read_csv("../output/pk/imp_itt.csv", show_col_types = F, progress = F),
+  read_csv(
+    "../output/equivalence/outcomes.csv", show_col_types = F, progress = F
+  ) |>
+    filter(mod == "imp", covars) |> 
+    mutate(wave = "base")
+) |> 
+  select(y, g, g_se, wave) |> 
+  mutate(
+    y = str_remove(y, "_(bl|pk(3|4)|k)$"), 
+    wave_time = case_match(wave, "base" ~ 1, "pk3" ~ 2, "pk4" ~ 3, "k" ~ 4),
+    wave_time = case_when(
+      grepl("bdig", y) ~ wave_time - .1,
+      grepl("fdig", y) ~ wave_time + .1,
+      .default = wave_time
+    ),
+    z = -qt(.05 / 2, 548),
+    ci_low = g - z * g_se,
+    ci_up = g + z * g_se
+  )
+
+y_regex <- c(
+  "wjlw", "wjap", "wjpv", "htks", "^(f|b)dig", "tom", "sps", "puzz"
+)
+title <- c(
+  "WJ Letter-Word Identification", "WJ Applied Problems", "WJ Picture Vocabulary", 
+  "Head-Toes-Knees-Shoulders", "Forward & Backward Digit Span", "Theory of Mind", 
+  "Social Problem-Solving", "Puzzle Choice"
+)
+```
+
+::: {.content-hidden}
+## Large
+:::
+
+```{r}
+#| label: fig-effect-size-trends-large
+#| fig-cap: "Outcome Effect Size Differences Between Montessori and Control Students Across Study Waves"
+#| fig-height: 8.5
+#| fig-width: 7
+plts <- map2(y_regex, title, ~ make_plots_eff_size_trend(.x, .y))
+reduce(plts, `+`) +
+  plot_layout(ncol = 2, axes = "collect")
+```
+
+::: {.content-hidden}
+## Medium
+:::
+
+```{r}
+#| label: fig-effect-size-trends-med
+#| fig-cap: "Outcome Effect Size Differences Between Montessori and Control Students Across Study Waves"
+#| fig-height: 4.48
+#| fig-width: 4.48
+plts <- map2(
+  y_regex, title, 
+  ~ make_plots_eff_size_trend(.x, .y, title_size = 7, med_size = T)
+)
+reduce(plts, `+`) +
+  plot_layout(ncol = 2, axes = "collect")
+```
