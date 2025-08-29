@@ -1,6 +1,6 @@
 # Montessori RCT Replication Code
 
-The code in this repo enables replication of all analyses in the public Montessori preschool evaluation RCT.
+The code in this repo enables replication of all analyses in the [public Montessori preschool evaluation RCT](https://osf.io/vuc42/).
 
 ## Downloading code files
 
