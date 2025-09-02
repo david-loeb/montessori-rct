@@ -7,7 +7,7 @@
 
 if (!require('pak')) install.packages('pak')
 pak::pkg_install(
-  c('tibble', 'purrr', 'tidyr', 'fastDummies', 'TimTeaFan/dplyover')
+  c('tibble', 'purrr', 'fixest', 'tidyr', 'fastDummies', 'TimTeaFan/dplyover')
 )
 library(purrr); library(tibble); library(tidyr)
 setwd(this.path::here())

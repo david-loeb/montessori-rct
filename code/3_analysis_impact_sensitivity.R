@@ -3,7 +3,7 @@
 #==============================================================================#
 
 if (!require('pak')) install.packages('pak')
-pak::pkg_install(c('this.path', 'tibble', 'broom'))
+pak::pkg_install(c('this.path', 'tibble', 'fixest', 'broom'))
 library(purrr); library(tibble)
 setwd(this.path::here())
 source('0_functions_analysis.R')
@@ -693,3 +693,41 @@ write.csv(
   na = '', row.names = F
 )
 
+# ==== Power: CC MDES ==========================================================
+
+pak::pkg_install('PowerUpR')
+
+params <- map(outcomes_sp24_final, \(y) {  # Get params to calc MDES by outcome
+  df_cc <- df_mod[
+    complete.cases(df_mod[c(covars_dummy, y, str_remove(y, '_sp24'))]), 
+  ]
+  df_n <- summarise(df_cc, n = n(), .by = itt)
+  n <- sum(df_n$n) / 25  # n per randomization block
+  p <- df_n$n[df_n$itt == 1] / sum(df_n$n)  # % sample in treatment group
+  mod <- fixest::feols(
+    as.formula(str_c(
+      y, '~', str_remove(y, '_sp24'), '+', str_flatten(covars_dummy, '+'),
+      '| lottery_num'
+    )),
+    data = df_cc, vcov = ~lottery_num_schl
+  )
+  r2 <- fixest::r2(mod)[[6]]  # % outcome variance explained by covariates
+  list(n, p, r2)
+})
+
+mdes_cc <- c()  # Calc MDES by outcome
+for (i in 1:9) {
+  mdes_cc[i] <- PowerUpR::mdes.bira2c1(
+    J = 25,  # number randomization blocks
+    n = params[[i]][[1]],
+    p = params[[i]][[2]],
+    g1 = 15,  # number covariates
+    r21 = params[[i]][[3]]
+  )$mdes[1]
+}
+
+res <- data.frame(  # Save results
+  y = outcomes_sp24_final,
+  mdes = mdes_cc
+)
+write.csv(res, '../output/k/sensitivity/mdes_cc.xlsx', na = '', row.names = F)
