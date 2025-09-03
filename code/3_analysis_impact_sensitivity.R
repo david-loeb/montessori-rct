@@ -333,7 +333,7 @@ map(1:9, \(i) {  # Save weighted Ns
 
 ### --- CC ---------------------------------------------------------------------
 
-#* This version is based missing any data, using complete cases.
+#* This version is based on missing any data, using complete cases.
 
 df_trim <- filter(  # Remove lottos w/ 100% miss (not in study at bl) & w/o both tx
   df, !(lottery_id %in% c(24,34,25,2,4,3,8,14,12,9,15,13))

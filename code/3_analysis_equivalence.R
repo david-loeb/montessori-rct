@@ -326,7 +326,7 @@ bind_rows(
 #* This section computes the share of participants with observed data on all
 #* model variables (complete cases) for each outcome in each follow-up wave.
 
-df$cc_bl_covs <- complete.cases(select(df, all_of(covariates[4:11])))
+df$cc_bl_covs <- complete.cases(select(df, all_of(covariates[3:11])))
 df |> 
   mutate(
     across(  # Create complete case indicators for each outcome
