@@ -18,7 +18,7 @@ For the other scripts, the first step to running the code is always to run the s
 
 ## Data
 
-The data needed for replication is available at the [project's Open Science Framework page](https://osf.io/cp8xg/files/osfstorage). Download the data and save it in the 'data' folder that the folder setup script creates.
+The data needed for replication is available at the project's [Open Science Framework page](https://osf.io/cp8xg/files/osfstorage). Download the data and save it in the 'data' folder that the folder setup script creates.
 
 ## Software requirements
 
