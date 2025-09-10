@@ -32,13 +32,13 @@ Rendering the tables and figures requires Quarto, a free scientific publishing s
 
 ### Blimp
 
-Multiple imputation is handled with the free Blimp software. Blimp is called through R using the `rblimp` package. Blimp can be [downloaded here](https://www.appliedmissingdata.com/blimp).
+Multiple imputation is handled with the free Blimp software. Blimp is called through R using the {rblimp} package. Blimp can be [downloaded here](https://www.appliedmissingdata.com/blimp).
 
 ## R package installation
 
-The code uses a number of external user-created R packages. The `pak` R package is used in each script to handle the installation and updating of the other external packages. It will install any packages not already installed. If you already have a package installed, if there is a new version available, it will ask if you want to update. If you already have the latest version installed, it will do nothing. You can also set a specific folder to install the packages to if you don't want to install them in your general R package library. See the [pak documentation site](http://pak.r-lib.org) for more details.
+The code uses a number of external user-created R packages. The {pak} R package is used in each script to handle the installation and updating of the other external packages. It will install any packages not already installed. If you already have a package installed, if there is a new version available, it will ask if you want to update. If you already have the latest version installed, it will do nothing. You can also set a specific folder to install the packages to if you don't want to install them in your general R package library. See the [{pak} documentation site](http://pak.r-lib.org) for more details.
 
-The `pacman` package is used instead in the table and figure generation Quarto script for simplicity. It installs any packages not already installed and otherwise leaves packages as-is. It also loads all packages. If you would like more control over package installation, feel free to switch to `pak` or another installation method in this document.
+The {pacman} package is used instead in the table and figure generation Quarto script for simplicity. It installs any packages not already installed and otherwise leaves packages as-is. It also loads all packages. If you would like more control over package installation, feel free to switch to {pak} or another installation method in this document.
 
 ## Code comments
 
