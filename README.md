@@ -1,6 +1,6 @@
 # Montessori RCT Replication Code
 
-The code in this repo enables replication of all analyses in the [public Montessori preschool evaluation RCT](https://osf.io/vuc42/).
+The code in this repo enables replication of all analyses in the [public Montessori preschool evaluation RCT](https://www.pnas.org/doi/10.1073/pnas.2506130122).
 
 ## Downloading code files
 
@@ -18,7 +18,7 @@ For the other scripts, the first step to running the code is always to run the s
 
 ## Data
 
-The data needed for replication is available at the project's [Open Science Framework page](https://osf.io/cp8xg/files/osfstorage). Download the data and save it in the 'data' folder that the folder setup script creates.
+The data needed for replication is available at the project's [Open Science Framework page](https://osf.io/cp8xg/overview). Download the data and save it in the 'data' folder that the folder setup script creates.
 
 ## Software requirements
 
