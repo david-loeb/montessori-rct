@@ -15,12 +15,12 @@ There are three options for completing this setup:
 ### Option 1: RStudio approach
 
 - Double click the "montessori-rct.Rproj" file. This will open the project in RStudio and automatically begin the process of setting up renv.
-- Then run the "setup.R" either by running `source('setup.R')` in the console or opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
 
 ### Option 2: VS Code / Positron approach
 
 - Open the project folder from within VS Code or Positron. This will automatically begin the process of setting up renv.
-- Then run the "setup.R" either by running `source('setup.R')` in the console or opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
 
 ### Option 3: Manual renv setup
 
