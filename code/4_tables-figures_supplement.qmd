@@ -1,0 +1,1777 @@
+---
+title: Montessori Study Supplemental Information Tables & Figures
+echo: false
+lot: true
+lof: true
+output-file: "tables_figures_supplement"
+output-ext: "pdf"
+format: 
+  pdf:
+    include-in-header: 
+      text: |
+        \usepackage{siunitx}
+        \sisetup{
+          input-open-uncertainty = , 
+          input-close-uncertainty = ,
+          table-align-text-pre = false,
+          table-align-text-post = false,
+          detect-all = true
+        }
+        \newcolumntype{d}{S[table-format=3.3, table-space-text-post={-}]}
+        \newcolumntype{n}{S[table-format=3.0, table-space-text-post={-}]}
+        \newcolumntype{g}{S[table-format=3.1, table-space-text-post={-}]}
+        \renewcommand{\arraystretch}{1.1}
+---
+
+::: {.content-hidden}
+Render this file to produce a PDF of the results tables and figure from the supplemental information document. The resulting PDF will be in the 'output/tables_figures' folder.
+:::
+
+```{r}
+#| label: setup
+suppressMessages(library(here)); library(readr)
+suppressMessages(library(dplyr)); library(stringr); library(tidyr)
+library(purrr); library(kableExtra); library(glue)
+library(ggplot2); library(patchwork)
+source(here("code/0_functions_results.R"))
+options(knitr.kable.NA = "")
+showtext::showtext_auto()
+showtext::showtext_opts(dpi = 1200)
+sysfonts::font_add_google("Roboto", "Roboto")
+
+# Footnote building blocks
+foot_stars <- "** p < .01, * p < .05, + p < .10"
+foot_vars <- "WJ = Woodcock-Johnson Z-scores, the age-normed version of the W score. HTKS = Head-Toes-Knees-Shoulders."
+foot_se <- "Numbers in parentheses are standard errors."
+
+foot_eff_size_impact <- "Effect sizes are the Cox index for the dichotomous Puzzle Choice and Hedges' \\\\textit{g} for all other outcomes."
+foot_eff_size_covars <- "Effect sizes are Hedges' \\\\textit{g} for continuous variables and the Cox index for binary variables."
+
+foot_means_eq <- "Control group means are the weighted means of the fixed effects, analogous to model intercepts."
+foot_means_impact <- str_replace(
+  foot_means_eq, "\\.", ", with grand mean-centered covariates."
+)
+
+foot_n_cc_pk <- "Complete case model sample sizes varied by outcome due to skipped questions; Table \\\\ref{tbl-miss-cc} shows \\\\textit{N}s for each outcome."
+
+foot_primary <- "Primary results are from the main multiple imputation ITT models."
+```
+
+```{dot}
+//| label: fig-consort-school
+//| fig-cap: "CONSORT Chart for Obtaining School Sample"
+//| fig-height: 5.85
+//| fig-width: 3.9
+digraph G {
+  graph [layout=fdp ratio=1.5]
+  {
+    node [fontname="helvetica" fontsize=10 shape=box]
+    total [label=<<I>N</I>&nbsp; = 588 Public Montessori<BR ALIGN="LEFT"/>schools in U.S. listed by<BR ALIGN="LEFT"/>NCMPS Census in 2020<BR ALIGN="LEFT"/>> pos="0,6!"]
+    nopk3 [label=<<I>n</I>&nbsp; = 230 Clearly did not have<BR ALIGN="LEFT"/>PK3 enrollment in 2020-21<BR ALIGN="LEFT"/>> pos="2.5,5.5!"]
+    pk3 [label=<<I>n</I>&nbsp; = 358 Public Montessori<BR ALIGN="LEFT"/>schools in U.S. enroll PK3<BR ALIGN="LEFT"/>> pos="0,5!"]
+    
+    nolottery [label=<<I>n</I>&nbsp; = 224 Clearly did not admit<BR ALIGN="LEFT"/>by lottery at 3<BR ALIGN="LEFT"/>> pos="2.5,4.5!"]
+    screened [label=<<I>n</I>&nbsp; = 134 Screened for<BR ALIGN="LEFT"/>inclusion<BR ALIGN="LEFT"/>> pos="0,4!"]
+    
+    nointerest [label=<<I>n</I>&nbsp; = 24 School unresponsive<BR ALIGN="LEFT"/><I>n</I>&nbsp; = 17 Did not admit by lottery at 3<BR ALIGN="LEFT"/><I>n</I>&nbsp; = 16 No 3-year-olds<BR ALIGN="LEFT"/><I>n</I>&nbsp; = 16 District declined<BR ALIGN="LEFT"/>&nbsp;&nbsp;application<BR ALIGN="LEFT"/><I>n</I>&nbsp; = 11 School did not meet<BR ALIGN="LEFT"/>&nbsp;&nbsp;minimum Montessori standards<BR ALIGN="LEFT"/>&nbsp;&nbsp;(5 not mixed ages, 5 too short<BR ALIGN="LEFT"/>&nbsp;&nbsp;work period, 1 untrained<BR ALIGN="LEFT"/>&nbsp;&nbsp;teachers)<BR ALIGN="LEFT"/><I>n</I>&nbsp; = 3 School declined (e.g.,<BR ALIGN="LEFT"/>&nbsp;&nbsp;COVID)<BR ALIGN="LEFT"/>> pos="2.5,3!"]
+    interested [label=<<I>n</I>&nbsp; = 47 Interested, district-<BR ALIGN="LEFT"/>approved, and initially<BR ALIGN="LEFT"/>eligible schools<BR ALIGN="LEFT"/>> pos="0,2!"]
+    
+    nowaitlist [label=<<I>n</I>&nbsp; = 22 Insufficient waitlist> pos="2.5,1.5!"]
+    eligible [label=<<I>n</I>&nbsp; = 25 Interested, district-<BR ALIGN="LEFT"/>approved, and fully eligible<BR ALIGN="LEFT"/>schools<BR ALIGN="LEFT"/>> pos="0,1!"]
+    
+    withdrew [label=<<I>n</I>&nbsp; = 1 School withdrew: no<BR ALIGN="LEFT"/>attending students consented<BR ALIGN="LEFT"/>> pos="2.5,0.5!"]
+    final [label=<<I>n</I>&nbsp; = 24 schools with 34<BR ALIGN="LEFT"/>viable PK3 lotteries for<BR ALIGN="LEFT"/>2021-22 school year<BR ALIGN="LEFT"/>> pos="0,0!"]
+  }
+  
+  total -> pk3 -> screened -> interested -> eligible -> final [arrowsize=0.5];
+  total -> nopk3 [arrowsize=0.5];
+  pk3 -> nolottery [arrowsize=0.5];
+  screened -> nointerest [arrowsize=0.5];
+  interested -> nowaitlist [arrowsize=0.5];
+  eligible -> withdrew [arrowsize=0.5];
+}
+```
+
+::: {#fig-consort-ind}
+```{dot}
+//| fig-height: 5.85
+//| fig-width: 5.85
+digraph G {
+  graph [layout=fdp ratio=1]
+  {
+    node [fontname="helvetica" fontsize=10 shape=box]
+    total [label=<Total Contacted<BR/><I>N</I>&nbsp; = 2919<BR/>707 T, 2097 C, 115 Unknown<BR/><BR/>(Waitlists from lotteries to<BR/> attend 25 schools, excluding<BR/>known priorities)> pos="2,6!"]
+    
+    // no response & not in sample
+    noresponse [label=<No response<BR/><I>n</I>&nbsp; = 2057<BR/>367 T, 1575 C, 115 Unknown<BR/>52% of T, 75% of C for known<BR/>Tx status children contacted> pos="4.7,5.25!"]
+    
+    notinsample [pos="4.7,3.75!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left"><u>Reason not in final sample</u></td><td>T</td><td>C</td><td>Tot</td> </tr>
+        <tr> <td align="left">Immediate decline</td><td align="right">&nbsp;69</td><td align="right">&nbsp;131</td><td align="right">&nbsp;200</td> </tr>
+        <tr> <td align="left">Revoked consent</td><td align="right">&nbsp;11</td><td align="right">&nbsp;38</td><td align="right">&nbsp;49</td> </tr>
+        <tr> <td align="left" cellpadding="1"><i>Ineligible (excluded):</i></td><td> </td><td> </td><td> </td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;School withdrew</td><td align="right">&nbsp;2</td><td align="right">&nbsp;2</td><td align="right">&nbsp;4</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;Out of age range</td><td align="right">&nbsp;10</td><td align="right">&nbsp;2</td><td align="right">&nbsp;12</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;Not viable lottery</td><td align="right">&nbsp;2</td><td align="right">&nbsp;0</td><td align="right">&nbsp;2</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;Family inaccessible</td><td align="right">&nbsp;1</td><td align="right">&nbsp;0</td><td align="right">&nbsp;1</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;Special needs / language</td><td align="right">&nbsp;3</td><td align="right">&nbsp;3</td><td align="right">&nbsp;6</td> </tr>
+      </table>>];
+    
+    //responded & in study
+    responded [label=<Responded<BR/><I>n</I>&nbsp; = 862<BR/>340 T, 522 C<BR/>48% of T, 25% of C> pos="2,4.5!"]
+    instudy [label=<Consented and Eligible<BR/><I>N</I>&nbsp; = 588<BR/>242 T, 346 C<BR/>24 schools<BR/>34 lotteries> pos="2,3!"]
+    
+    //treat / ctrl row
+    treat [label=<Intervention Group:<BR/>Offered Seat at Study Montessori<BR/><I>n</I>&nbsp; = 242 (34.2% of known T contacted)<BR/>Mean per school: 10.08<BR/>Mean per lottery: 7.12> pos="1,1.5!"]
+    control [label=<Control Group:<BR/>Waitlisted for Study Montessori<BR/><I>n</I>&nbsp; = 346 (16.5% of known C contacted)<BR/>Mean per lottery: 10.18> pos="4.7,1.5!"]
+    
+    //last row
+    treattake [label=<Attended Study<BR/>Montessori in PK3<BR/><I>n</I>&nbsp; = 213 (88%)<BR/>Mean per classroom: 1.48> pos="0,0!"]
+    treatnotake [label=<Did not attend in PK3<BR/>(No shows)<BR/><I>n</I>&nbsp; = 29 (12%)<BR/>(<I>n</I>&nbsp; = 5 attended a<BR/>non-study Montessori)> pos="2,0!"]
+    controltake [label=<Attended Study<BR/>Montessori in PK3<BR/>(Crossovers)<BR/><I>n</I>&nbsp; = 67 (19%)> pos="3.8,0!"]
+    controlnotake [label=<Did not attend in PK3<BR/><I>n</I>&nbsp; = 279 (81%)<BR/>(<I>n</I>&nbsp; = 26 attended a<BR/>non-study Montessori)> pos="5.6,0!"]
+  }
+  total -> responded -> instudy -> treat -> {treattake treatnotake} [arrowsize=0.5];
+  instudy -> control -> {controltake controlnotake} [arrowsize=0.5];
+  total -> noresponse [arrowsize=0.5];
+  responded -> notinsample [arrowsize=0.5];
+}
+```
+
+\vspace{.1cm}
+\sffamily \footnotesize \raggedright Two schools provided incomplete information and two schools provided no information on 115 "no response" lottery entrants. Thus, the percentages shown on the chart are among the 2804 for whom we have treatment status information. @tbl-cnsnt-overall shows consent rates among the 20 schools that provided complete information.
+
+CONSORT Chart for Obtaining Analytic Sample
+:::
+
+::: {#fig-consort-miss}
+```{dot}
+//| fig-height: 6.9
+//| fig-width: 6.9
+digraph G {
+  graph [layout=fdp ratio=1 overlap="true"]
+  {
+    node [fontname="helvetica" fontsize=10 shape=box] 
+    
+    total [pos="3,1.75!" label=<Total Analytic Sample<BR/><I>N</I>&nbsp; = 588<BR/>242 T, 346 C>]
+    
+    misscov [pos="6,1.5!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left" colspan="4">Skipped At Least One<BR ALIGN="LEFT"/>Baseline Covariate Question</td> </tr>
+        <tr> <td align="left"> </td><td  border="1" sides="B">T</td><td  border="1" sides="B">C</td><td  border="1" sides="B">Tot</td> </tr>
+        <tr> <td align="left">Total</td><td align="right">&nbsp;15</td><td align="right">&nbsp;12</td><td align="right">&nbsp;27</td> </tr>
+        <tr> <td align="left" height="15" valign="BOTTOM" colspan="4"><i>Completed assessments:</i></td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;Baseline</td><td align="right">&nbsp;12</td><td align="right">&nbsp;7</td><td align="right">&nbsp;19</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK3</td><td align="right">&nbsp;14</td><td align="right">&nbsp;8</td><td align="right">&nbsp;22</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK4</td><td align="right">&nbsp;10</td><td align="right">&nbsp;8</td><td align="right">&nbsp;18</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;K</td><td align="right">&nbsp;10</td><td align="right">&nbsp;8</td><td align="right">&nbsp;18</td> </tr>
+      </table>
+    >];
+    
+    cccov [pos="3,1.25!" label=<Complete Baseline<BR/>Covariate Data<BR/><I>n</I>&nbsp; = 561<BR/>227 T, 334 C>]
+    
+    cccovmissbl [pos="6,.75!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left" colspan="4">Not Assessed at Baseline</td> </tr>
+        <tr> <td align="left"> </td><td  border="1" sides="B">T</td><td  border="1" sides="B">C</td><td  border="1" sides="B">Tot</td> </tr>
+        <tr> <td align="left">Total</td><td align="right">&nbsp;49</td><td align="right">&nbsp;116</td><td align="right">&nbsp;165</td> </tr>
+        <tr> <td align="left">Not yet in study&nbsp;</td><td align="right">&nbsp;10</td><td align="right">&nbsp;65</td><td align="right">&nbsp;75</td> </tr>
+        <tr> <td align="left">Unable to reach&nbsp;</td><td align="right">&nbsp;39</td><td align="right">&nbsp;51</td><td align="right">&nbsp;90</td> </tr>
+        
+        <tr> <td align="left" height="15" valign="BOTTOM" colspan="4"><i>Completed assessments:</i></td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK3</td><td align="right">&nbsp;39</td><td align="right">&nbsp;34</td><td align="right">&nbsp;73</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK4</td><td align="right">&nbsp;31</td><td align="right">&nbsp;34</td><td align="right">&nbsp;65</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;K</td><td align="right">&nbsp;27</td><td align="right">&nbsp;35</td><td align="right">&nbsp;62</td> </tr>
+      </table>
+    >];
+    
+    cccovbl [pos="3,.75!" label=<Complete Baseline Covariate<BR/>and Assessment Data<BR/><I>n</I>&nbsp; = 396<BR/>178 T, 218 C>]
+    
+    ccpk3 [pos="0,0!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left" colspan="4">PK3 Complete Data</td> </tr>
+        <tr> <td align="left"> </td><td  border="1" sides="B">T</td><td  border="1" sides="B">C</td><td  border="1" sides="B">Tot</td> </tr>
+        <tr> <td align="left">Complete covar &amp; assess&nbsp;</td><td align="right">&nbsp;170</td><td align="right">&nbsp;188</td><td align="right">&nbsp;358</td> </tr>
+        <tr> <td align="left">Missing BL HTKS</td><td align="right">&nbsp;5</td><td align="right">&nbsp;4</td><td align="right">&nbsp;9</td> </tr>
+        <tr> <td align="left"><B>Complete model data</B></td><td><B>165</B></td><td><B>184</B></td><td><B>349</B></td> </tr>
+      </table>
+    >];
+    
+    ccpk4 [pos="3,0!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left" colspan="4">PK4 Complete Data</td> </tr>
+        <tr> <td align="left"> </td><td  border="1" sides="B">T</td><td  border="1" sides="B">C</td><td  border="1" sides="B">Tot</td> </tr>
+        <tr> <td align="left">Complete covar &amp; assess&nbsp;</td><td align="right">&nbsp;137</td><td align="right">&nbsp;160</td><td align="right">&nbsp;297</td> </tr>
+        <tr> <td align="left">Missing BL HTKS</td><td align="right">&nbsp;3</td><td align="right">&nbsp;4</td><td align="right">&nbsp;7</td> </tr>
+        <tr> <td align="left"><B>Complete model data&nbsp;</B></td><td><B>134</B></td><td><B>156</B></td><td><B>290</B></td> </tr>
+        <tr> <td align="left">Also complete PK3</td><td align="right">&nbsp;132</td><td align="right">&nbsp;147</td><td align="right">&nbsp;279</td> </tr>
+      </table>
+    >];
+    
+    cck [pos="6,0!" label=<
+      <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+        <tr> <td align="left" colspan="4">K Complete Data</td> </tr>
+        <tr> <td align="left"> </td><td  border="1" sides="B">T</td><td  border="1" sides="B">C</td><td  border="1" sides="B">Tot</td> </tr>
+        <tr> <td align="left">Complete covar &amp; assess&nbsp;</td><td align="right">&nbsp;128</td><td align="right">&nbsp;158</td><td align="right">&nbsp;286</td> </tr>
+        <tr> <td align="left">Missing BL HTKS</td><td align="right">&nbsp;3</td><td align="right">&nbsp;4</td><td align="right">&nbsp;7</td> </tr>
+        <tr> <td align="left"><B>Complete model data&nbsp;</B></td><td><B>125</B></td><td><B>154</B></td><td><B>279</B></td> </tr>
+        <tr> <td align="left" height="15" valign="BOTTOM" colspan="4"><i>Also complete:</i></td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK3 &amp; PK4</td><td align="right">&nbsp;114</td><td align="right">&nbsp;125</td><td align="right">&nbsp;239</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK3 only</td><td align="right">&nbsp;9</td><td align="right">&nbsp;17</td><td align="right">&nbsp;26</td> </tr>
+        <tr> <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;PK4 only</td><td align="right">&nbsp;1</td><td align="right">&nbsp;8</td><td align="right">&nbsp;9</td> </tr>
+      </table>
+    >];
+    
+  }
+  total -> cccov -> cccovbl -> {ccpk3 ccpk4 cck} [arrowsize=0.5]
+  total -> misscov [arrowsize=0.5]
+  cccov -> cccovmissbl [arrowsize=0.5]
+}
+```
+
+\sffamily \footnotesize \raggedright The "Complete model data" row shows the maximum complete case model sample size at each wave. Some participants did not complete certain outcome assessment measures despite being assessed, so the complete case sample size is lower for those outcomes. See @tbl-miss-cc for complete case sample size by outcome. The baseline Head-Toes-Knees-Shoulders (HTKS) measure was used as a control variable in all models; some participants did not complete this measure despite being assessed at baseline. The "Missing BL HTKS" row captures such participants who otherwise had complete data. The "Also complete" rows give the number of participants with complete model data in a given wave who also had complete model data in the specified prior waves. The "Completed assessments" rows indicate the number of participants who, despite having missing baseline data, still completed later assessments.
+
+CONSORT Chart for Missing and Observed Data at Each Wave
+:::
+
+```{r}
+#| label: tbl-domain-avg-eff-size
+#| tbl-cap: "Cognition Domain Average Effect Size"
+read_csv("../../output/k/domain_avg_effect_size.csv") |> 
+  filter(htks == "yes") |> 
+  select(miss, gbar, gbar_se, p) |> 
+  mutate(
+    gbar = str_c(glue("{format(round(gbar, 3), nsmall = 3)}"), "***"),
+    gbar_se = glue("{format(round(gbar_se, 3), nsmall = 3)}"),
+    p = glue("{format(round(p, 3), nsmall = 3)}"),
+    miss = case_match(miss, "imp" ~ "Multiple Imputation", "cc" ~ "Complete Case")
+  ) |> 
+  kbl(
+    booktabs = T,
+    col.names = c("Model", "Eff. Size", "SE", "p")
+  ) |> 
+  row_spec(0, align = c("l","c","c","c")) |> 
+  footnote(
+    '\\\\sffamily\\\\footnotesize{Head-Toes-Knees-Shoulders, Forward Digit Span, Backward Digit Span, and Theory of Mind are in the Cognition domain. "Eff. Size" is the average Hedges\' \\\\textit{g} effect size across the four outcomes. "SE" is the standard error and "p" is the \\\\textit{p}-value. \\\\textit{N} = 588 for multiple imputation; see Table \\\\ref{tbl-miss-cc} for complete case sample sizes by outcome.}',
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-pk3-imp
+#| tbl-cap: "Multiple Imputation ITT and CACE Montessori Results at End of PK3"
+bind_rows(
+  read_xlsx("../../output/pk/imp_itt.xlsx") |> 
+    filter(wave == "pk3") |> mutate(spec = "itt"),
+  read_xlsx("../../output/pk/imp_cace.xlsx") |> 
+    filter(wave == "pk3") |> mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4),
+    foot = str_c(
+      "\\\\textit{N} = 588. ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact, " ", foot_means_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-pk3-cc
+#| tbl-cap: "Complete Case ITT and CACE Montessori Results at End of PK3"
+bind_rows(
+  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+    filter(wave == "pk3") |> mutate(spec = "itt"),
+  read_xlsx("../../output/pk/cc_cace.xlsx") |> 
+    filter(wave == "pk3") |> mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4),
+    foot = str_c(
+      foot_n_cc_pk, " ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact, " ", foot_means_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-pk4-imp
+#| tbl-cap: "Multiple Imputation ITT and CACE Montessori Results at End of PK4"
+bind_rows(
+  read_xlsx("../../output/pk/imp_itt.xlsx") |> 
+    filter(wave == "pk4") |> mutate(spec = "itt"),
+  read_xlsx("../../output/pk/imp_cace.xlsx") |> 
+    filter(wave == "pk4") |> mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4),
+    foot = str_c(
+      "\\\\textit{N} = 588. ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact, " ", foot_means_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-pk4-cc
+#| tbl-cap: "Complete Case ITT and CACE Montessori Results at End of PK4"
+bind_rows(
+  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+    filter(wave == "pk4") |> mutate(spec = "itt"),
+  read_xlsx("../../output/pk/cc_cace.xlsx") |> 
+    filter(wave == "pk4") |> mutate(spec = "cace")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "spec", 
+    col_headers = c(" " = 1, "ITT" = 4, "CACE" = 4),
+    foot = str_c(
+      foot_n_cc_pk, " ",foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact, " ", foot_means_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-external-valid-nonstudy
+#| tbl-cap: "Test Score and Demographic Comparisons of Study and Non-Study Public Montessoris"
+data.frame(
+  y = c('reading3', 'reading8', 'asian', 'black', 'hispanic', 'white', 'ed'),
+  coef = c(
+    -0.070786781, -0.079889716, 0.006012665, -0.002056095, 0.088078581,
+    -0.078185725, -0.074922263
+  ),
+  se = c(
+    0.036317883, 0.042070667, 0.035251645, 0.052986135, 0.080004272,
+    0.074008364, 0.057634735
+  ),
+  g = c(
+    -0.363631065, -0.401120721, 0.064339245, -0.00922902, 0.402026957,
+    -0.285559963, -0.298978937
+  ),
+  g_se = c(
+    0.188394555, 0.309449301, 0.179271043, 0.179233359, 0.179620092,
+    0.17939989, 0.17947625
+  ),
+  nonstudy_mean = c(
+    0.484048062, 0.557848012, 0.052078244, 0.152067876, 0.228967586,
+    0.497371963, 0.393676808
+  ),
+  study_mean = c(
+    0.413261281, 0.477958296, 0.058090909, 0.15001178, 0.317046167,
+    0.419186238, 0.318754545
+  ),
+  n_nonstudy = c(492, 222, 546, 549, 549, 552, 546),
+  n_study = c(30, 11, 33, 33, 33, 33, 33)
+) |> 
+  filter(y != "reading8") |> 
+  rename(
+    ctrl_mean = nonstudy_mean, treat_mean = study_mean,
+    n_ctrl = n_nonstudy, n_treat = n_study
+  ) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    col_names = c(
+      " ", "{\\shortstack{Non-Study\\\\Mean}}", "{\\shortstack{Study\\\\Mean}}",
+      "{Diff}", "{Eff. Size}"
+    ),
+    foot = "Data is from the 2016-17 through 2018-19 school years, estimated with year fixed effects regressions. Non-study means are the weighted mean of the fixed effects, analogous to the model intercept and nearly identical to descriptive sample means. Numbers in parentheses are standard errors, clustered by school. School \\\\textit{N}s = 11 study and 184 non-study for demographics; 10 study and 164 non-study for test scores. Model \\\\textit{N}s are school \\\\textit{N}s times three."
+  )
+```
+
+```{r}
+#| label: tbl-external-valid-school-sample-chars
+#| tbl-cap: "Average Characteristics of Study Schools Compared to the Samples From Each School"
+
+data.frame(
+  var = c('lowinc', 'ell', 'asian', 'black', 'hispanic', 'white'),
+  full = c(
+    0.377727273, 0.132272727, 0.050454545, 0.217727273, 0.301818182, 0.370909091
+  ),
+  sample = c(
+    0.275644723, 0.162613302, 0.06258041, 0.150415781, 0.273530364, 0.420241605
+  ),
+  diff = c(
+    -0.10208255, 0.030340574, 0.012125865, -0.067311492, -0.028287818, 0.049332514
+  )
+) |> 
+  mutate(
+    full = str_c(glue("{format(round(full * 100, 1), nsmall = 1)}"), "{\\%}"),
+    sample = str_c(glue("{format(round(sample * 100, 1), nsmall = 1)}"), "{\\%}"),
+    diff = str_c(glue("{format(round(diff * 100, 1), nsmall = 1)}"), "{\\%}"),
+    var = case_match(
+      var, "lowinc" ~ "Low-Income", "ell" ~ "English Learner", "asian" ~ "Asian",
+      "black" ~ "Black", "hispanic" ~ "Hispanic", "white" ~ "White"
+    )
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "", escape = F,
+    align = "lrrr",
+    col.names = c(
+      "", "\\shortstack{Full\\\\School}", "Sample", "Diff"
+    )
+  ) |> 
+  row_spec(0, align = c("l", "c", "c", "c")) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{Full school data are from the National Center for Education Statistics Common Core of Data for the 2022-23 school year. Low-income is free or reduced-price lunch eligibility for the full school column and annual income below \\\\$50,000 for the sample column.}",
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-da-bl-eq
+#| tbl-cap: "Treatment-Control Baseline Covariate Equivalence for Schools With and Without Ranked Choice Lotteries"
+bind_rows(
+  read_xlsx("../../output/equivalence/covariates_rank-choice-ltry-only.xlsx") |>
+    mutate(rank_choice = "yes"),
+  read_xlsx("../../output/equivalence/covariates_no-rank-choice-ltry.xlsx") |>
+    mutate(rank_choice = "no")
+) |> 
+  filter(y != "age_study") |> 
+  mutate(
+    y = factor(
+      y, levels = c(
+        "income_over_75k", "caregiver_bachelors", "caregiver_married",
+        "household_size", "primary_lang_english", "female", "hispanic", "asian",
+        "black", "white", "racemulti", "raceother"
+      )
+    )
+  ) |> 
+  arrange(y) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, .means = T,
+    spec_col = "rank_choice", 
+    col_headers = c(" " = 1, "Ranked Choice" = 4, "Not Ranked Choice" = 4),
+    foot = str_c(
+      "\\\\textit{N} = 346 for ranked choice; 268 control, 78 treatment. \\\\textit{N} = 242 for non-ranked choice; 78 control, 164 treatment. ",
+      foot_se, " ", foot_eff_size_covars, " ", foot_means_eq
+    )
+  )
+```
+
+```{r}
+#| label: tbl-da-itt
+#| tbl-cap: "ITT Estimates for Schools Without Ranked Choice Lotteries"
+bind_rows(
+  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+    mutate(spec = "full"),
+  read_xlsx('../../output/k/sensitivity/no-rank-choice_imp_itt.xlsx') |> 
+    mutate(spec = "imp"),
+  read_xlsx('../../output/k/sensitivity/no-rank-choice_cc_itt.xlsx') |> 
+    mutate(spec = "cc") |> 
+    filter(!grepl("wj.+ws|htks_(all|ord|sq)|easy", y))
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T,
+    coef_name = "Est.",
+    spec_col = "spec", 
+    foot = str_c(
+      "\\\\textit{N} = 242 for multiple imputation; 78 control, 164 treatment. \\\\textit{N} = 124 for complete case; 37 control, 87 treatment. ",
+      foot_vars, " ", foot_se, " ", foot_eff_size_impact, " ", foot_primary
+    )
+  ) |> 
+  add_header_above(
+    c(
+      " " = 1, "\\\\textit{Primary Model}" = 2, 
+      "\\\\shortstack{No Rank Choice\\\\\\\\Mult. Imp.}" = 2, 
+      "\\\\shortstack{No Rank Choice\\\\\\\\Complete Case}" = 2
+    ),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-cnsnt-overall
+#| tbl-cap: "Study Consent Rates by Treatment Status"
+df <- read_xlsx('../../data/all_lottery_applicants.xlsx') |> 
+  filter(!is.na(lottery_id))
+bind_rows(
+  summarise(df, total = n(), consented = sum(consented)),
+  filter(df, !(lottery_id %in% c(1, 16, 19, 22))) |> 
+  summarise(total = n(), consented = sum(consented), .by = itt)
+) |> 
+  relocate(consented) |> relocate(mont_offer) |> 
+  mutate(
+    rate = scales::percent(consented / total),
+    mont_offer = case_match(mont_offer, 0 ~ "Control", 1 ~ "Treatment", .default = "Overall")
+  ) |> 
+  kbl(
+    booktabs = T, 
+    align = c("l", "c", "r", "c"),
+    col.names = c(" ", "Consented", "Total", "Consent Rate")
+  ) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{The school that dropped out of the study is excluded (\\\\textit{N} = 12 applicants). Consent by treatment status excludes four schools that did not provide treatment status information for non-consenters. \\\\textit{N} = 2702 applicants for schools with treatment status of non-consenters.}",
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-cnsnt-inc-ind
+#| tbl-cap: "Average Consent Rates for Low- and Higher-Income Applicants Across Three Schools With Low-Income Preference Lotteries"
+data.frame(
+  type = c('Higher-Income', 'Lower-Income'),
+  ctrl = c(
+    scales::percent(.306, accuracy = .1), 
+    scales::percent(.279, accuracy = .1)
+  ),
+  treat = c(
+    scales::percent(.569, accuracy = .1), 
+    scales::percent(.407, accuracy = .1)
+  )
+) |> 
+  kbl(
+    booktabs = T, 
+    align = c("l", "c", "c"),
+    col.names = c(" ", "Control", "Treatment")
+  ) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 140 for lower-income applicants; 96 control, 44 treatment. \\\\textit{N} = 162 for higher-income applicants; 115 control, 47 treatment.}",
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-cnsnt-lee-bounds
+#| tbl-cap: "Differential Consent Lee Bounds for ITT Estimates"
+make_results_tbl(
+  read_xlsx("../../output/k/sensitivity/consent_lee-bounds.xlsx"),
+  .se = F, .p = F, .g = T, .g_se = F, 
+  spec_col = "bound", group_specs = F,
+  col_names = c(" ", "{Lower}", "{Upper}", "{Lower}", "{Upper}"),
+  col_headers = c(" " = 1, "ITT Est. Bounds" = 2, "Eff. Size Bounds" = 2),
+  foot = str_c(
+    "\\\\textit{N} = 228; 168.8 control, 59.2 treatment. Decimals are due to weighting. ",
+    foot_vars, " ", foot_eff_size_impact
+  )
+)
+```
+
+```{r}
+#| label: tbl-cnsnt-pstrat-strata
+#| tbl-cap: "Principal Strata for Post-Treatment Assignment Consenting Behavior"
+data.frame(
+  a = c("Treatment", "Treatment"),
+  cnsnt = c("Consent", "No Consent"),
+  c1 = c("always consenter", "control-only consenter"),
+  c2 = c("treatment-only consenter", "never consenter")
+) |> 
+  kbl(
+    booktabs = T, escape = F,
+    align = c("l","l","c","c"),
+    col.names = c(" ", " ", "Consent", "No Consent")
+  ) |> 
+  add_header_above(c(" " = 2, "Control" = 2), line_sep = 5) |> 
+  collapse_rows(1, latex_hline = "major")
+```
+
+```{r}
+#| label: tbl-cnsnt-pstrat-res
+#| tbl-cap: "Treatment-Only Consenter Principal Stratum Mean Required to Produce Spurious Observed Treatment Effects"
+read_xlsx("../../output/k/sensitivity/consent_principal-strat.xlsx") |>
+  make_results_tbl(
+    .coef = F, .means = T, 
+    .custom = c("comply_mean", "comply_always_diff", "diff_g"),
+    col_names = c(" ", "{Ctrl}", "{Treat}", "{Mean}", "{Diff}", "{Eff. Size}"), 
+    col_headers = c(
+      " " = 1, "Primary ITT\nModel Means" = 2, 
+      "Treatment-Only Consenter\nMean & Diff\nCompared to Control" = 3
+    ),
+    foot = str_c(foot_vars, " ", foot_eff_size_impact)
+  )
+```
+
+```{r}
+#| label: tbl-miss-rates-assess
+#| tbl-cap: "Missing Assessment Rates by Study Wave"
+df <- read_xlsx("../../output/equivalence/miss_assess-by-wave.xlsx") |> 
+  pivot_wider(names_from = itt, values_from = matches("b|k")) |> 
+  rename_with(~ str_replace(.x, "(.+)_(all|ctrl|treat)", "\\2_\\1")) %>%
+  pivot_longer(2:ncol(.), names_to = c(".value", "itt"), names_sep = "_") |> 
+  mutate(
+    diff = ctrl - treat,
+    across(where(is.numeric), ~ scales::percent(.x, accuracy = .1)),
+    itt = case_match(
+      itt, "base" ~ "Baseline", "pk3" ~ "PK3", "pk4" ~ "PK4", "k" ~ "K"
+    )
+  ) |> 
+  select(-type)
+
+kbl(
+  df, booktabs = T, linesep = "",
+  align = c("l", "r", "r", "r", "r"),
+  col.names = c(" ", "All", "Ctrl", "Treat", "Diff")
+) |> 
+  row_spec(0, align = "c") |> 
+  group_rows("Full Sample", 1, 4, bold = F, italic = T) |> 
+  group_rows("In Study at Baseline", 5, 8, bold = F, italic = T) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588; 346 control, 242 treatment.}",
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-miss-cc
+#| tbl-cap: "Complete Case Model Sample Sizes"
+bind_rows(
+  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+    select(y, wave, matches("^n")),
+  read_xlsx("../../output/equivalence/miss_cc-k.xlsx") |> 
+    filter(wave == 'k') |> 
+    select(y, wave, n_ctrl = ctrl_n, n_treat = treat_n)
+) |> 
+  mutate(
+    y = case_when(
+      grepl('wjlw', y) ~ "WJ Letter-Word",
+      grepl('wjap', y) ~ "WJ Applied Prob",
+      grepl('wjpv', y) ~ "WJ Pic Vocab",
+      grepl('htks', y) ~ "HTKS",
+      grepl('fdigit', y) ~ 'Forward Digit',
+      grepl('bdigit', y) ~ 'Backward Digit',
+      grepl('^tom', y) ~ 'Theory of Mind',
+      grepl('^sps', y) ~ "Social Prob-Solve",
+      grepl('puzz', y) ~ "Puzzle Choice"
+    ),
+    n_tot = n_ctrl + n_treat
+  ) |> 
+  pivot_wider(
+    names_from = wave,
+    values_from = c(n_ctrl, n_treat, n_tot)
+  ) |> 
+  select(y, matches("n_tot"), matches("n_ctrl"), matches("n_treat")) |> 
+  select(y, matches("pk3"), matches("pk4"), matches("k")) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = "lrrrr",
+    col.names = c(" ", rep(c("All", "Ctrl", "Treat"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 3, "PK4" = 3, "K" = 3)) |> 
+  row_spec(0, align = "c") |> 
+  footnote(
+    str_c("\\\\sffamily\\\\footnotesize{", foot_vars, "}"),
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-miss-rates-all
+#| tbl-cap: "Missing Data Rates for All Variables at Baseline and Kindergarten"
+read_xlsx("../../output/equivalence/miss_all-bl-k.xlsx") |> 
+  mutate(
+      y = case_when(
+        grepl('wjlw', y) ~ "WJ Letter-Word",
+        grepl('wjap', y) ~ "WJ Applied Prob",
+        grepl('wjpv', y) ~ "WJ Pic Vocab",
+        grepl('htks', y) ~ "HTKS",
+        grepl('fdigit', y) ~ 'Forward Digit',
+        grepl('bdigit', y) ~ 'Backward Digit',
+        grepl('^tom', y) ~ 'Theory of Mind',
+        grepl('^sps', y) ~ "Social Prob-Solve",
+        grepl('puzz', y) ~ "Puzzle Choice",
+        grepl('house.+size', y) ~ 'Household Size',
+        grepl('lang_eng', y) ~ 'Primary Lang English',
+        grepl('hispanic', y) ~ 'Hispanic',
+        grepl('bachelor', y) ~ 'Caregiver Has B.A.',
+        grepl('married', y) ~ 'Caregiver Married',
+        grepl('inc.+75k', y) ~ 'Fam Income 75k+',
+        grepl('asian', y) ~ 'Asian',
+        grepl('black', y) ~ 'Black',
+        grepl('white', y) ~ 'White',
+        grepl('race_num', y) ~ 'Race',
+        grepl('female', y) ~ 'Female',
+        .default = y
+      ),
+      across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))
+    ) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = "lrrrr",
+    col.names = c(" ", "All", "Ctrl", "Treat", "Diff")
+  ) |> 
+  group_rows("Baseline Covariates", 1, 8, bold = F, italic = T) |> 
+  group_rows("Baseline Outcomes", 9, 17, bold = F, italic = T) |> 
+  group_rows("K Outcomes", 18, 26, bold = F, italic = T) |> 
+  footnote(
+    str_c("\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588; 346 control, 242 treatment. ", foot_vars, "}"),
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-miss-cc-k
+#| tbl-cap: "Participants With Observed Data for All Kindergarten Model Variables (Complete Cases)"
+read_xlsx("../../output/equivalence/miss_cc-k.xlsx") |> 
+  filter(wave == "k") |> 
+  select(-ends_with("n")) |> 
+  mutate(
+    y = case_when(
+      grepl('wjlw', y) ~ "WJ Letter-Word",
+      grepl('wjap', y) ~ "WJ Applied Prob",
+      grepl('wjpv', y) ~ "WJ Pic Vocab",
+      grepl('htks', y) ~ "HTKS",
+      grepl('fdigit', y) ~ 'Forward Digit',
+      grepl('bdigit', y) ~ 'Backward Digit',
+      grepl('^tom', y) ~ 'Theory of Mind',
+      grepl('^sps', y) ~ "Social Prob-Solve",
+      grepl('puzz', y) ~ "Puzzle Choice",
+    ),
+    diff_pct = treat_pct - ctrl_pct,
+    across(matches("_pct$"), ~ scales::percent(.x, accuracy = .1))
+  ) |> 
+  select(-wave) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = "lrrrrrrr",
+    col.names = c(" ", "All", "Ctrl", "Treat", "Diff")
+  ) |> 
+  row_spec(0, align = "c") |> 
+  footnote(
+    str_c("\\\\sffamily\\\\footnotesize{", foot_vars, "}"),
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-miss-bal
+#| tbl-cap: "Differences on Baseline Measures for Participants With Missing Assessment Data Compared to Those With Observed Data"
+
+df <- read_xlsx("../../output/equivalence/miss_equivalence.xlsx") |> 
+  filter(spec == "miss bl assess")
+df <- bind_rows(
+  df,
+  read_xlsx("../../output/equivalence/miss_equivalence.xlsx") |> 
+    filter(
+      spec == "miss k, observe bl" & y %in% df$y
+      | spec == "miss k, imputed bl" & !(y %in% df$y)
+    )
+) |> 
+  mutate(
+    spec = ifelse(spec == "miss bl assess", "base", "k"),
+    y = factor(
+      y, levels = c(
+        "income_over_75k", "caregiver_bachelors", "caregiver_married",
+        "household_size", "primary_lang_english", "female", "hispanic", "asian",
+        "black", "white", "racemulti", "raceother", 
+        "wjlw_bl", "wjap_bl", "wjpv_bl", "htks_bl", "fdigit_bl", 
+        "bdigit_bl", "tom_bl", "sps_bl", "puzz_bl"
+      )
+    )
+  ) |> 
+  arrange(spec, y)
+
+make_results_tbl(
+  df, .se = F, .g = T, 
+  coef_name = "Coef", 
+  spec_col = "spec",
+  col_headers = c(" ", "Missing Baseline" = 2, "Missing K" = 2),
+  foot = str_c(
+    "\\\\textit{N} = 588. ", foot_vars, " ", foot_eff_size_covars
+  )
+) |> 
+  group_rows("Baseline Covariates", 1, 12, bold = F, italic = T) |> 
+  group_rows("Baseline Outcomes", 13, 21, bold = F, italic = T)
+  
+```
+
+```{r}
+#| label: tbl-miss-ipw-bal
+#| tbl-cap: "Treatment-Control Balance on Baseline Measures for the Full Sample, Observed Assessment Data Sample, and Inverse Probability of Observed Data Weighted Sample"
+
+df <- bind_rows(
+  read_xlsx(
+    "../../output/k/sensitivity/miss_pscore_cc_balance_mean-across-outcomes.xlsx"
+  ) |> 
+    mutate(spec = "compcase"),
+  read_xlsx(
+    "../../output/k/sensitivity/miss_pscore_imp_balance_mean-across-outcomes.xlsx"
+  ) |> 
+    mutate(spec = "imp")
+) |> 
+  mutate(
+    across(
+      matches("^diff"),
+      ~ ifelse(
+        var == "household_num_log",
+        exp(get(str_replace(cur_column(), "diff", "treat_mean")))
+        - exp(get(str_replace(cur_column(), "diff", "ctrl_mean"))),
+        .x
+      )
+    )
+  ) |> 
+  select(y = var, matches("^diff"), spec) |> 
+  relocate(diff_cc_wt, .after = diff_cc) |> 
+  filter(
+    !grepl("htks_ord|assessmnt", y),
+    !(grepl("^wj|htks_og|(f|b)dig|tomtot|spbq|puzz", y) & spec == "compcase")
+  ) |> 
+  mutate(
+    y = factor(
+      y, levels = c(
+        "income_over_75k", "caregiver_bachelors", "caregiver_married",
+        "household_size", "primary_lang_english", "female", "hispanic", "asian",
+        "black", "white", "racemulti", "raceother", 
+        "wjlw_bl", "wjap_bl", "wjpv_bl", "htks_bl", "fdigit_bl", 
+        "bdigit_bl", "tom_bl", "sps_bl", "puzz_bl"
+      )
+    )
+  ) |> 
+  arrange(spec, y)
+
+make_results_tbl(
+  df, .coef = F, .custom = c("diff_full", "diff_cc", "diff_cc_wt"),
+  spec_col = "spec", 
+  col_names = c(" ", rep(c("{Full}", "{Obs.}", "{Wtd.}"), 2)),
+  col_headers = c(" ", "Observed Baseline & K" = 3, "Observed K" = 3),
+  foot = "\\\\textit{N} = 588 for full sample. \\\\textit{N} = 279 for participants with observed baseline \\\\& K variables. \\\\textit{N} = 366 for participants with observed K outcome. See Table \\\\ref{tbl-miss-ipw-n} for weighted model \\\\textit{N}s. Sample sizes were smaller for some outcomes due to skipped questions; see Tables \\\\ref{tbl-miss-rates-all} and \\\\ref{tbl-miss-cc} for sample sizes by outcome."
+) |> 
+  group_rows("Baseline Covariates", 1, 11, bold = F, italic = T) |> 
+  group_rows("Baseline Outcomes", 12, 20, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-miss-ipw-res
+#| tbl-cap: "ITT Estimates for Participants With Observed Data Using Regression Weighted by Inverse Probability of Observing Data"
+bind_rows(
+  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+    mutate(spec = "full"),
+  read_xlsx("../../output/k/sensitivity/miss_pscore_cc_itt.xlsx") |> 
+    mutate(spec = "compcase"),
+  read_xlsx("../../output/k/sensitivity/miss_pscore_imp_itt.xlsx") |> 
+    mutate(spec = "imp")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, coef_name = "Est.", spec_col = "spec",
+    foot = str_c(
+      "See Table \\\\ref{tbl-miss-ipw-n} for \\\\textit{N}s. ", foot_vars, " ", foot_se, " ", foot_eff_size_impact,
+      " ", foot_primary
+    )
+  ) |> 
+  add_header_above(
+    c(
+      " ", "\\\\textit{Primary Model}" = 2, "Observed Base \\\\& K" = 2, 
+      "Observed K" = 2
+    ),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-miss-ipw-n
+#| tbl-cap: "Inverse Probability of Observing Data Weighted Sample Sizes"
+bind_rows(
+  read_xlsx("../../output/k/sensitivity/miss_pscore_n-wtd_cc.xlsx") |> 
+    mutate(spec = "compcase"),
+  read_xlsx("../../output/k/sensitivity/miss_pscore_n-wtd_imp.xlsx") |> 
+    mutate(spec = "imp")
+) |> 
+  make_results_tbl(
+    .coef = F, .ns = T,
+    spec_col = "spec",
+    col_names = c(" ", rep(c("{Ctrl}", "{Treat}"), 2)),
+    n_dec = 1,
+    foot = foot_vars
+  ) |> 
+  add_header_above(
+    c(" ", "\\\\shortstack{Observed\\\\\\\\Base \\\\& K}" = 2, "Observed K" = 2),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-miss-lee
+#| tbl-cap: "Differential Missingness Lee Bounds for ITT Estimates"
+
+bind_rows(
+  read_xlsx("../../output/k/sensitivity/miss_lee-bounds_cc.xlsx") |> 
+    mutate(spec = "compcase") |> 
+    select(-n_ctrl, -n_treat) |> 
+    left_join(
+      read_xlsx("../../output/k/sensitivity/miss_lee-bounds_n-wtd_cc.xlsx") |> 
+        select(y, n_ctrl, n_treat),
+      "y"
+    ),
+  read_xlsx("../../output/k/sensitivity/miss_lee-bounds_imp.xlsx") |> 
+    mutate(spec = "imp") |> 
+    select(-n_ctrl, -n_treat) |> 
+    left_join(
+      read_xlsx("../../output/k/sensitivity/miss_lee-bounds_n-wtd_imp.xlsx") |> 
+        select(y, n_ctrl, n_treat),
+      "y"
+    )
+) |> 
+  mutate(id = str_c(y, "_", spec)) |> 
+  make_results_tbl(
+    .se = F, .p = F, .g = T, .g_se = F, .ns = T,
+    spec_col = "bound", group_specs = F, long_spec = T,
+    col_names = c(" ", rep(c("{Lower}", "{Upper}"), 2), "{Ctrl}", "{Treat}"),
+    col_headers = c(" " = 1, "ITT Est. Bounds" = 2, "Eff. Size Bounds" = 2, "N" = 2),
+    n_dec = 1,
+    get_tbl_df = T
+  ) |> 
+  select(-n_ctrl_tbl_lower, -n_treat_tbl_lower) |> 
+  kbl(
+    booktabs = T, escape = F, linesep = "",
+    align = c("l", rep("d", 4), "n", "n"),
+    col.names = c(" ", rep(c("{Lower}", "{Upper}"), 2), "{Ctrl}", "{Treat}")
+  ) |> 
+  add_header_above(
+    c(" " = 1, "ITT Est. Bounds" = 2, "Eff. Size Bounds" = 2, "N" = 2), 
+    line_sep = 5
+  ) |> 
+  group_rows(
+    "Missing Any Data (Complete Cases)", 1, 9, 
+    bold = F, italic = T
+  ) |> 
+  group_rows(
+    "Missing Kindergarten Data (Imputed Baseline Measures)", 10, 18, 
+    bold = F, italic = T
+  ) |> 
+  footnote(
+    str_c(
+      "\\\\sffamily\\\\footnotesize{\\\\textit{N} decimals are due to weights. ", foot_vars, " ", 
+      foot_eff_size_impact, "}"
+    ),
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-miss-pstrat
+#| tbl-cap: "Treatment-Only Data Provider Principal Stratum Mean Required to Produce Spurious Observed Treatment Effects"
+bind_rows(
+  read_xlsx("../../output/k/sensitivity/miss_principal-strat_cc.xlsx") |> 
+    mutate(spec = "compcase"),
+  read_xlsx("../../output/k/sensitivity/miss_principal-strat_imp.xlsx") |> 
+    mutate(spec = "imp")
+) |> 
+  mutate(id = str_c(y, "_", spec)) |> 
+  make_results_tbl(
+    .coef = F, .means = T, 
+    .custom = c("comply_mean", "comply_always_diff", "diff_g"),
+    col_names = c(" ", "{Ctrl}", "{Treat}", "{Mean}", "{Diff}", "{Eff. Size}"), 
+    col_headers = c(
+      " " = 1, "Primary ITT\nModel Means" = 2, 
+      "Treatment-Only Data Provider\nMean & Diff\nCompared to Control" = 3
+    ),
+    foot = str_c(foot_vars, " ", foot_eff_size_impact)
+  ) |> 
+  group_rows(
+    "Missing Any Data (Complete Case Models)", 1, 9, 
+    bold = F, italic = T
+  ) |> 
+  group_rows(
+    "Missing Kindergarten Data (Multiple Imputation Models)", 10, 18, 
+    bold = F, italic = T
+  )
+```
+
+```{r}
+#| label: fig-miss-mix
+#| fig-scap: "Mixture Model ITT Effect Estimates Under Specific MNAR Assumptions"
+#| fig-cap: "Mixture Model ITT Effect Estimates Under Specific MNAR Assumptions. Each panel displays a set of ITT effects estimated under missing not at random (MNAR) assumptions for the outcome noted in the panel title. The MNAR assumptions are specified as effect size differences between study participants with missing and observed data. Each assumption has two components: the difference in conditional outcome means among control group members with missing and observed data, and the difference in treatment effects among treatment group members with missing and observed data. The ITT was estimated under 15 different MNAR assumptions, each combination of effect size differences from -0.50 to 0.50 in increments of 0.25, for each outcome. Bayesian 95% credible intervals, analogous to confidence intervals, are shown for each estimate. Treatment effect size difference magnitudes of at least 0.25, and in some cases greater than 0.50, would be required to bring treatment effects to zero. *N* = 588."
+#| fig-height: 8.25
+#| fig-width: 7
+df <- read_xlsx("../../output/k/sensitivity/miss_mixture.xlsx") |> 
+  filter(abs(treat_diff) != .1, !(abs(ctrl_diff) %in% c(.1, .25))) |> 
+  mutate(
+    title = case_match(
+      y,
+      "wjlw_k" ~ "WJ Letter-Word Identification",
+      "wjap_k" ~ "WJ Applied Problems",
+      "htks_k" ~ "Head-Toes-Knees-Shoulders",
+      "fdigit_k" ~ "Forward Digit Span",
+      "tom_k" ~ "Theory of Mind"
+    )
+  )
+
+var <- c("wjlw_k", "wjap_k", "htks_k", "fdigit_k", "tom_k")
+
+plts <- map(var, make_plots_mix_mod)
+(plts[[1]] + plts[[2]] + plts[[3]] + plts[[4]] + plts[[5]] + guide_area()) +
+  plot_layout(ncol = 2, guides = "collect", axis_titles = "collect") &
+  theme(
+    plot.title = element_text(size = 10),
+    axis.title.x = element_text(margin = margin(10, 0, 0, 0))
+  )
+```
+
+```{r}
+# Data setup for balance tables & figure 
+df <- left_join(
+  read_xlsx(
+    "../../output/k/sensitivity/pscore-treat_balance_mean-across-outcomes.xlsx"
+  ) |> 
+    rename(y = var),
+  bind_rows(
+    og_cov <- read_xlsx("../../output/equivalence/covariates.xlsx") |> 
+      select(y, coef_og = coef, g_og = g),
+    og_y <- read_xlsx("../../output/equivalence/outcomes.xlsx") |> 
+      filter(mod == "imp", covars == F) |> 
+      select(y, coef_og = coef, g_og = g)
+  ),
+  by = "y"
+) |> 
+  rename(coef_adj = raw_diff, g_adj = std_diff) |> 
+  filter(!grepl("assessmnt|num_log|htks_ordinal|==", y)) |> 
+  mutate(
+    y = factor(
+      case_when(
+        grepl('wjlw', y) ~ "WJ Letter-Word",
+        grepl('wjap', y) ~ "WJ Applied Prob",
+        grepl('wjpv', y) ~ "WJ Pic Vocab",
+        grepl('htks', y) ~ "HTKS",
+        grepl('fdigit', y) ~ 'Forward Digit',
+        grepl('bdigit', y) ~ 'Backward Digit',
+        grepl('^tom', y) ~ 'Theory of Mind',
+        grepl('^sps', y) ~ "Social Prob-Solve",
+        grepl('puzz', y) ~ "Puzzle Choice",
+        grepl('house.+size', y) ~ 'Household Size',
+        grepl('lang_eng', y) ~ 'Primary Lang English',
+        grepl('hispanic', y) ~ 'Hispanic',
+        grepl('bachelor', y) ~ 'Caregiver Has B.A.',
+        grepl('married', y) ~ 'Caregiver Married',
+        grepl('inc.+75k', y) ~ 'Fam Income 75k+',
+        grepl('asian', y) ~ 'Asian',
+        grepl('black', y) ~ 'Black',
+        grepl('white', y) ~ 'White',
+        grepl('racemultioth', y) ~ 'Multi or Other Race',
+        grepl('female', y) ~ 'Female',
+        grepl('^age_', y) ~ 'Age',
+        grepl("pscore", y) ~ "Propensity Score",
+        grepl("prog_score", y) ~ "Prognostic Score",
+        .default = y
+      ),
+      levels = c(
+        "Fam Income 75k+", "Caregiver Has B.A.", "Caregiver Married", 
+        "Household Size", "Primary Lang English", "Age", "Female", "Hispanic", 
+        "Asian", "Black", "White", "Multi or Other Race",
+        "WJ Letter-Word", "WJ Applied Prob", "WJ Pic Vocab", "HTKS", 
+        "Forward Digit", "Backward Digit", "Theory of Mind", 
+        "Social Prob-Solve", "Puzzle Choice", 
+        "Propensity Score", "Prognostic Score"
+      )
+    )
+  ) |> 
+  pivot_longer(
+    matches("og$|adj$"), names_to = c(".values", "spec"), names_sep = "_"
+  ) |> 
+  pivot_wider(names_from = `.values`, values_from = value) |> 
+  arrange(desc(spec), y)
+```
+
+```{r}
+#| label: tbl-pscore-bal-wt
+#| tbl-cap: "Balance on Baseline Measures After Propensity Score Weighting"
+filter(df, spec == "adj", mod == "weight") |> 
+  make_results_tbl(
+    .se = F, .p = F, .g = T, .means = T,
+    spec_col = "lotteries",
+    col_headers = c(
+      " ", "All Lotteries" = 4, "Lotteries With Both\nTreatment Conditions" = 4
+    ),
+    foot = str_c(
+      foot_vars, " ", foot_eff_size_covars, " ", foot_means_eq,
+      " See Table \\\\ref{tbl-pscore-ess} for model \\\\textit{N}s."
+    )
+  ) |> 
+  group_rows("Baseline Covariates", 1, 12, bold = F, italic = T) |> 
+  group_rows("Baseline Outcomes", 13, 21, bold = F, italic = T) |>
+  group_rows("Distance Metrics", 22, 23, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-pscore-bal-match
+#| tbl-cap: "Balance on Baseline Measures After Propensity Score Matching"
+filter(df, spec == "adj", mod == "match") |> 
+  make_results_tbl(
+    .se = F, .p = F, .g = T, .means = T,
+    spec_col = "lotteries",
+    col_headers = c(
+      " ", "All Lotteries" = 4, "Lotteries With Both\nTreatment Conditions" = 4
+    ),
+    foot = str_c(
+      foot_vars, " ", foot_eff_size_covars, " ", foot_means_eq,
+      " See Table \\\\ref{tbl-pscore-ess} for model \\\\textit{N}s."
+    )
+  ) |> 
+  group_rows("Baseline Covariates", 1, 12, bold = F, italic = T) |> 
+  group_rows("Baseline Outcomes", 13, 21, bold = F, italic = T) |>
+  group_rows("Distance Metrics", 22, 23, bold = F, italic = T)
+```
+
+\newpage
+
+```{r}
+#| label: fig-pscore-bal
+#| fig-scap: "Balance on Baseline Measures Before and After Propensity Score Adjustment"
+#| fig-cap: "Balance on Baseline Measures Before and After Propensity Score Adjustment. Each panel shows treatment-control balance on baseline covariates and outcomes for the propensity score adjustment method and specification described in the panel title. The red dots show balance before adjustment and the blue dots show balance after adjustment. Balance is shown in absolute effect size differences. Effect sizes are Hedges' *g* for continuous variables and the Cox index for binary variables. The vertical dashed line indicates a 0.10 absolute effect size, a commonly used threshold for determining adequate balance. Weighting achieved adequate balance on all variables, and matching achieved adequate balance on most, but not all, variables. Balance improved substantially, though, in each specification. See @tbl-pscore-ess for effective sample sizes under each specification."
+#| fig-height: 8.25
+#| fig-width: 7
+func_params <- expand_grid(mod = c("weight", "match"), lot = c(T, F))
+plts <- pmap(func_params, ~ make_plots_love(..1, ..2))
+(plts[[1]] + plts[[2]] + plts[[3]] + plts[[4]]) + 
+  plot_layout(ncol = 2, axes = "collect", guides = "collect") &
+  theme(legend.position = "bottom", plot.title = element_text(size = 10))
+```
+
+\newpage
+
+```{r}
+#| label: tbl-pscore-res
+#| tbl-cap: "ITT Estimates After Treatment Propensity Score Weighting and Matching"
+bind_rows(
+  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+    mutate(spec = "primary"),
+  read_xlsx("../../output/k/sensitivity/pscore-treat_itt.xlsx") |> 
+    rename(coef = estimate, se = std.error, p = p.value) |> 
+    mutate(spec = str_c(mod, lotteries))
+) |> 
+  make_results_tbl(
+    spec_col = "spec",
+    col_names = c(" ", "{\\textit{Primary}}", rep(c("{Weight}", "{Match}"), 2)),
+    col_headers = c(
+      " " = 2, "All Lotteries" = 2, "Lotteries With Both\nTreat Conditions" = 2
+    ),
+    foot = str_c(
+      foot_vars, " ", foot_se, " ", foot_primary,
+      " See Table \\\\ref{tbl-pscore-ess} for model \\\\textit{N}s."
+    )
+  )
+```
+
+```{r}
+#| label: tbl-pscore-ess
+#| tbl-cap: "Effective Sample Sizes for Propensity Score Analyses"
+read_xlsx("../../output/k/sensitivity/pscore-treat_itt.xlsx") |> 
+  mutate(id = str_c(y, mod)) |> 
+  arrange(desc(mod)) |> 
+  rename(n_ctrl = ess_ctrl, n_treat = ess_treat) |> 
+  make_results_tbl(
+    .coef = F, .ns = T,
+    spec_col = "lotteries", long_spec = T,
+    col_names = c(" ", rep(c("{Ctrl}", "{Treat}"), 2)),
+    col_headers = c(
+      " ", "All Lotteries" = 2, "Lotteries With\nBoth Treat\nConditions" = 2
+    ),
+    n_dec = 1,
+    foot = str_c(
+      "The matching approach, optimal full matching, weights the sample in addition to matching. The number of matched control participants is slightly more than double the final weighted effective sample size for the matched models. ", foot_vars
+    )
+  ) |> 
+  group_rows("Weighted", 1, 9, bold = F, italic = T) |> 
+  group_rows("Matched", 10, 18, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-alt-cov-res
+#| tbl-cap: "ITT Estimates Using Alternative Covariate Specifications"
+bind_rows(
+  read_xlsx("../../output/k/covars_cc_itt.xlsx") |> 
+    mutate(spec = "compcase"),
+  read_xlsx("../../output/k/covars_imp_itt.xlsx") |> 
+    mutate(spec = "imp")
+) |> 
+  filter(!(spec == "compcase" & !grepl("^no |^bl y", covariates))) |> 
+  mutate(spec = str_c(spec, covariates)) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, 
+    coef_name = "Est.",
+    spec_col = "spec",
+    col_headers = c(
+      " ", "No Covars" = 2, "Base Y Only, CC" = 2, 
+      "Base Y Only, Imp" = 2, "All Base Ys & Covars" = 2
+    ),
+    foot = str_c(
+      "\\\\textit{N} = 588 for models with multiply-imputed data (columns 5-8). See Table \\\\ref{tbl-alt-cov-n} for non-imputation model sample sizes. ", foot_vars, " ", foot_se, " ", foot_eff_size_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-alt-cov-n
+#| tbl-cap: "Sample Sizes for Complete Case Alternative Covariate Specification Models"
+read_xlsx("../../output/k/covars_cc_itt.xlsx") |> 
+  filter(grepl("^no |^bl y", covariates)) |> 
+  make_results_tbl(
+    .coef = F, .ns = T, 
+    spec_col = "covariates",
+    col_names = c(" ", rep(c("{Ctrl}", "{Treat}"), 2)),
+    col_headers = c(" ", "No Covars" = 2, "Base Y Only" = 2),
+    foot = foot_vars
+  )
+```
+
+```{r}
+#| label: tbl-alt-cov-age
+#| tbl-cap: "ITT Estimates With Age as a Covariate"
+bind_rows(
+  read_xlsx("../../output/k/covars_age-ctrl_imp_itt.xlsx") |> 
+    filter(!grepl("^wj", y)) |> 
+    mutate(spec = "imp"),
+  read_xlsx("../../Output/K/covars_age-ctrl_cc_itt.xlsx") |> 
+    filter(!grepl("^wj", y)) |> 
+    mutate(spec = "compcase")
+) |> 
+  make_results_tbl(
+    .g = T, .g_se = T, coef_name = "Coef",
+    spec_col = "spec",
+    col_headers = c(" ", "Mult. Imp." = 2, "Complete Case" = 2),
+    foot = str_c(
+      "\\\\textit{N} = 588 for multiple imputation. See Table \\\\ref{tbl-miss-cc} for complete case \\\\textit{N}s by outcome. HTKS = Head-Toes-Knees-Shoulders. ",
+      foot_se, " ", foot_eff_size_impact
+    )
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-schl-type
+#| tbl-cap: "Number of Schools in Sample by Type"
+data.frame(
+  type = c(
+    "Study Montessori",
+    "Other Montessori, Public",
+    "Other Montessori, Private",
+    "Public, Traditional",
+    "Public, Charter",
+    "Public, Magnet",
+    "Private",
+    "Out of U.S.",
+    "Total"
+  ),
+  all_pk3 = c(24, 9, 8, 41, 18, 6, 38, 0, 144),
+  ctrl_pk3 = c(18, 9, 5, 37, 18, 6, 34, 0, 127),
+  treat_pk3 = c(23, 2, 3, 4, 4, 0, 6, 0, 42),
+  all_pk4 = c(24, 8, 5, 67, 25, 8, 55, 1, 193),
+  ctrl_pk4 = c(18, 6, 2, 50, 22, 7, 42, 1, 148),
+  treat_pk4 = c(23, 4, 3, 18, 7, 2, 13, 0, 70),
+  all_k = c(24, 7, 2, 107, 30, 7, 29, 1, 207),
+  ctrl_k = c(18, 5, 0, 75, 23, 6, 23, 1, 151),
+  treat_k = c(22, 3, 2, 38, 12, 2, 6, 0, 85)
+) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 9)),
+    col.names = c("School Type", rep(c("All", "Ctrl", "Trt"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 3, "PK4" = 3, "K" = 3), line_sep = 5) |> 
+  row_spec(0, align = c("l", rep("c", 9)))
+```
+
+```{r}
+#| label: tbl-schl-settings-schl-curric
+#| tbl-cap: "Number of Schools in Sample by Curriculum"
+data.frame(
+  type = c(
+    "Montessori",
+    "Creative Curriculum",
+    "Play-Based (Unspecified)",
+    "Academic Focus",
+    "IB",
+    "Reggio",
+    "Project-Based (Unspecified)",
+    "Responsive Classroom",
+    "Expeditionary Learning",
+    "Every Child Ready",
+    "Tools of the Mind",
+    "Nature-Based",
+    "HighScope",
+    "Unclear",
+    "Total"
+  ),
+  all_pk3 = c(41, 28, 29, 12, 7, 6, 3, 1, 3, 2, 2, 2, 2, 6, 144),
+  ctrl_pk3 = c(32, 28, 24, 11, 7, 5, 3, 1, 3, 2, 2, 2, 1, 6, 127),
+  treat_pk3 = c(28, 1, 6, 1, 2, 1, 0, 0, 1, 0, 0, 0, 1, 1, 42),
+  all_pk4 = c(38, 25, 33, 13, 6, 9, 6, 4, 4, 3, 3, 2, 2, 45, 193),
+  ctrl_pk4 = c(26, 23, 27, 11, 6, 8, 5, 3, 3, 3, 3, 2, 1, 27, 148),
+  treat_pk4 = c(31, 2, 6, 2, 2, 1, 1, 1, 2, 0, 0, 0, 1, 21, 70),
+  all_k = c(35, 14, 7, 12, 9, 5, 8, 8, 5, 3, 2, 1, 0, 98, 207),
+  ctrl_k = c(24, 14, 7, 12, 8, 5, 7, 7, 4, 2, 2, 1, 0, 58, 151),
+  treat_k = c(28, 1, 0, 0, 3, 0, 2, 3, 2, 1, 0, 0, 0, 45, 85)
+) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 9)),
+    col.names = c("Curriculum", rep(c("All", "Ctrl", "Trt"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 3, "PK4" = 3, "K" = 3), line_sep = 5) |> 
+  row_spec(0, align = c("l", rep("c", 9)))
+```
+
+```{r}
+#| label: tbl-schl-settings-type
+#| tbl-cap: "Sample Enrollment Percentages by School Type"
+read_xlsx("../../output/k/exploratory/school-settings_descriptives_type.xlsx") |> 
+  mutate(
+    schl_type = case_match(
+      schl_type,
+      "mont_study" ~ "Study Montessori", 
+      "mont_nonstudy_pub" ~ "Other Montessori, Public",
+      "mont_nonstudy_priv" ~ "Other Montessori, Private",
+      "public_reg" ~ "Public, Traditional",
+      "public_charter" ~ "Public, Charter",
+      "public_magnet" ~ "Public, Magnet",
+      "private" ~ "Private",
+      "not_in_school" ~ "Not in School",
+      "out_of_us" ~ "Out of U.S.",
+      "unknown" ~ "Unknown"
+    ),
+    across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 6)),
+    col.names = c("School Type", rep(c("Ctrl", "Treat"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 2, "PK4" = 2, "K" = 2), line_sep = 5) |> 
+  row_spec(0, align = c("l", rep("c", 6))) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-curric
+#| tbl-cap: "Sample Enrollment Percentages by School Curriculum"
+
+bind_rows(
+  read_xlsx(
+    "../../output/k/exploratory/school-settings_descriptives_curriculum_agg.xlsx"
+  ),
+  read_xlsx(
+    "../../output/k/exploratory/school-settings_descriptives_curriculum_detail.xlsx"
+  ) |> 
+    rename(schl_curric = schl_curric_detail)
+) |> 
+  mutate(
+    schl_curric = case_match(
+      schl_curric, 
+      "mont" ~ "Montessori", "play_proj" ~ "Play or Project-Based",
+      "academic" ~ "Academic Focus", "other_unsure" ~ "Other or Unclear",
+      "unknown" ~ "Unknown",
+      .default = schl_curric
+    ),
+    across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 6)),
+    col.names = c("Curriculum", rep(c("Ctrl", "Treat"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 2, "PK4" = 2, "K" = 2), line_sep = 5) |> 
+  group_rows("Aggregated", 1, 5, bold = F, italic = T) |> 
+  group_rows("Detailed", 6, 20, bold = F, italic = T) |> 
+  row_spec(0, align = c("l", rep("c", 6))) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-span
+#| tbl-cap: "Sample Enrollment Percentages by School Age Range"
+read_xlsx("../../output/k/exploratory/school-settings_descriptives_span.xlsx") |> 
+  mutate(
+    schl_span = case_match(
+      schl_span, "elem" ~ "Pre-K & Elem", "prek" ~ "Pre-K", 
+      "childcare" ~ "Childcare", "unclear" ~ "Unclear",
+      "not_in_school" ~ "Not in School", "unknown" ~ "Unknown"
+    ),
+    across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 6)),
+    col.names = c("Type", rep(c("Ctrl", "Treat"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 2, "PK4" = 2, "K" = 2), line_sep = 5) |> 
+  row_spec(0, align = c("l", rep("c", 6))) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-ages
+#| tbl-cap: "Sample Enrollment Percentages by School Classroom Age Group Mix"
+read_xlsx(
+  "../../output/k/exploratory/school-settings_descriptives_class-age-mix.xlsx"
+) |> 
+  mutate(across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", rep("r", 6)),
+    col.names = c("Ages in Class", rep(c("Ctrl", "Treat"), 3))
+  ) |> 
+  add_header_above(c(" ", "PK3" = 2, "PK4" = 2, "K" = 2), line_sep = 5) |> 
+  row_spec(0, align = c("l", rep("c", 6))) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-pstrat-strata-cace
+#| tbl-cap: "Principal Strata for CACE Analyses"
+data.frame(
+  a = c("Treatment", "Treatment"),
+  cnsnt = c("Attend Study Mont.", "Attend Other School"),
+  c1 = c("always taker", "defier"),
+  c2 = c("complier", "never taker")
+) |> 
+  kbl(
+    booktabs = T, escape = F,
+    align = c("l","l","c","c"),
+    col.names = c(" ", " ", "Attend Study Mont.", "Attend Other School")
+  ) |> 
+  add_header_above(c(" " = 2, "Control" = 2), line_sep = 5) |> 
+  collapse_rows(1, latex_hline = "major")
+```
+
+```{r}
+#| label: tbl-schl-settings-pstrat-strata-example
+#| tbl-cap: "Principal Strata for Public, Private, and No School Counterfactual Conditions"
+data.frame(
+  a = c("Treatment", "Treatment"),
+  cnsnt = c("Study Mont.", "Other Pub.", "Private", "No School"),
+  c1 = c("always taker", "\\sout{defier}", "\\sout{defier}", "\\sout{defier}"),
+  c2 = c(
+    "complier\\textsubscript{pub}", "never taker", 
+    "\\sout{never taker}", "\\sout{never taker}"
+  ),
+  c3 = c(
+    "complier\\textsubscript{priv}", "\\sout{never taker}", 
+    "never taker", "\\sout{never taker}"
+  ),
+  c4 = c(
+    "complier\\textsubscript{none}", "\\sout{never taker}", 
+    "\\sout{never taker}", "never taker"
+  )
+) |> 
+  kbl(
+    booktabs = T, escape = F,
+    align = c("llcccc"),
+    col.names = c(" ", " ", "Study Mont.", "Other Pub.", "Private", "No School")
+  ) |> 
+  add_header_above(c(" " = 2, "Control" = 4), line_sep = 5) |> 
+  collapse_rows(1, latex_hline = "major")
+```
+
+```{r}
+# Data setup for pstrat results tables
+df <- read_xlsx("../../output/k/exploratory/principal-strat_bounds_min-max.xlsx") |>
+  filter(
+    grepl("wjlw|wjap|htks|fdigit|^tom", y), miss == "cc", shrink_min_max == 1
+  ) |> 
+  mutate(
+    y_og = y,
+    y = case_match(
+      ctrl_contrast,
+      "mont_nonstudy_pub" ~ "Non-Study Montessori, Public",
+      "mont_nonstudy_priv" ~ "Non-Study Montessori, Private",
+      "pub_nonmont" ~ "Other Public",
+      "priv_nonmont" ~ "Other Private",
+      "not_in_school" ~ "Not in School",
+      "play" ~ "Play or Project-Based",
+      "academic" ~ "Academic Focus",
+      "unsure" ~ "Unsure",
+      .default = ctrl_contrast
+    )
+  )
+```
+
+```{r}
+#| label: tbl-schl-settings-pstrat-res-type-study-mont
+#| tbl-cap: "School Type Principal Strata Treatment Effect Bounds With Study Montessori as Treatment Take-Up"
+filter(df, grepl("mont_nonstudy_pub", groups)) |> 
+  make_results_tbl(
+    .coef = F, 
+    .custom = c("itt_min", "itt_max", "share_bound_pos", "y_0", "complier_share"),
+    pct_col = c("share_bound_pos", "complier_share"),
+    col_names = c(
+      "Control Contrast", "{\\shortstack{Lower\\\\Bound}}", 
+      "{\\shortstack{Upper\\\\Bound}}", "{\\shortstack{Pct. Bound\\\\Positive}}",
+      "{{\\shortstack{Control\\\\Mean}}}", "{\\shortstack{Complier\\\\Share}}"
+    ),
+    foot = str_c(
+      "\\\\textit{N} = 364. ", foot_vars, ' "Control Mean" is the estimated untreated potential outcome mean for the stratum. "Complier Share" is the estimated percentage of compliers that belong to the stratum.'
+    )
+  ) |> 
+  group_rows("WJ Letter-Word", 1, 5, bold = F, italic = T) |> 
+  group_rows("WJ Applied Problems", 6, 10, bold = F, italic = T) |> 
+  group_rows("HTKS", 11, 15, bold = F, italic = T) |> 
+  group_rows("Forward Digit", 16, 20, bold = F, italic = T) |> 
+  group_rows("Theory of Mind", 21, 25, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-schl-settings-pstrat-res-type-any-mont
+#| tbl-cap: "School Type Principal Strata Treatment Effect Bounds With Any Montessori as Treatment Take-Up"
+filter(df, takeup_group == "mont_all", grepl("pub_nonmont", groups)) |> 
+  make_results_tbl(
+    .coef = F, 
+    .custom = c("itt_min", "itt_max", "share_bound_pos", "y_0", "complier_share"),
+    pct_col = c("share_bound_pos", "complier_share"),
+    col_names = c(
+      "Control Contrast", "{\\shortstack{Lower\\\\Bound}}", 
+      "{\\shortstack{Upper\\\\Bound}}", "{\\shortstack{Pct. Bound\\\\Positive}}",
+      "{{\\shortstack{Control\\\\Mean}}}", "{\\shortstack{Complier\\\\Share}}"
+    ),
+    foot = str_c(
+      "\\\\textit{N} = 364. ", foot_vars, ' "Control Mean" is the estimated untreated potential outcome mean for the stratum. "Complier Share" is the estimated percentage of compliers that belong to the stratum.'
+    )
+  ) |> 
+  group_rows("WJ Letter-Word", 1, 3, bold = F, italic = T) |> 
+  group_rows("WJ Applied Problems", 4, 6, bold = F, italic = T) |> 
+  group_rows("HTKS", 7, 9, bold = F, italic = T) |> 
+  group_rows("Forward Digit", 10, 12, bold = F, italic = T) |> 
+  group_rows("Theory of Mind", 13, 15, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-schl-settings-pstrat-res-curric
+#| tbl-cap: "School Curriculum Principal Strata Treatment Effect Bounds With Any Montessori as Treatment Take-Up"
+filter(df, takeup_group == "mont", grepl("academic", groups)) |> 
+  make_results_tbl(
+    .coef = F, 
+    .custom = c("itt_min", "itt_max", "share_bound_pos", "y_0", "complier_share"),
+    pct_col = c("share_bound_pos", "complier_share"),
+    col_names = c(
+      "Control Contrast", "{\\shortstack{Lower\\\\Bound}}", 
+      "{\\shortstack{Upper\\\\Bound}}", "{\\shortstack{Pct. Bound\\\\Positive}}",
+      "{{\\shortstack{Control\\\\Mean}}}", "{\\shortstack{Complier\\\\Share}}"
+    ),
+    foot = str_c(
+      "\\\\textit{N} = 364. ", foot_vars, ' "Control Mean" is the estimated untreated potential outcome mean for the stratum. "Complier Share" is the estimated percentage of compliers that belong to the stratum.'
+    )
+  ) |> 
+  group_rows("WJ Letter-Word", 1, 3, bold = F, italic = T) |> 
+  group_rows("WJ Applied Problems", 4, 6, bold = F, italic = T) |> 
+  group_rows("HTKS", 7, 9, bold = F, italic = T) |> 
+  group_rows("Forward Digit", 10, 12, bold = F, italic = T) |> 
+  group_rows("Theory of Mind", 13, 15, bold = F, italic = T)
+```
+
+```{r}
+#| label: tbl-schl-yrs-des
+#| tbl-cap: "Number of Years Enrolled in a Study Montessori, PK3 Through Kindergarten"
+read_xlsx("../../output/k/exploratory/yrs-in-mont_descriptives.xlsx") |> 
+  mutate(
+    ctrl = scales::percent(ctrl, accuracy = .1),
+    treat = scales::percent(treat, accuracy = .1)
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "",
+    align = c("l", "r", "r"),
+    col.names = c("Years Enrolled", "Ctrl", "Treat")
+  ) |> 
+  row_spec(0, align = "c") |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 588}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-change-des
+#| tbl-cap: "Number of School Changes During Pre-K and Kindergarten"
+read_xlsx("../../output/k/exploratory/school-changes_descriptives_cc.xlsx") |> 
+  mutate(
+    var = case_match(
+      var, "avg" ~ "Mean", "c0" ~ "0", "c1" ~ "1", "c2" ~ "2", "c3" ~ "3"
+    ),
+    ctrl = ifelse(
+      var == "Mean", 
+      glue("{format(round(ctrl, 2), nsmall = 2)}"),
+      str_c(glue("{format(round(ctrl * 100, 1), nsmall = 1)}"), "{\\%}")
+    ),
+    treat = ifelse(
+      var == "Mean", 
+      glue("{format(round(treat, 2), nsmall = 2)}"),
+      str_c(glue("{format(round(treat * 100, 1), nsmall = 1)}"), "{\\%}")
+    )
+  ) |> 
+  kbl(
+    booktabs = T, linesep = "", escape = F,
+    align = c("c", "d", "d"),
+    col.names = c("\\shortstack{School\\\\Changes}", "{Ctrl}", "{Treat}")
+  ) |> 
+  footnote(
+    "\\\\sffamily\\\\footnotesize{\\\\textit{N} = 275}", 
+    general_title = "", threeparttable = T, escape = F, footnote_as_chunk = T
+  )
+```
+
+```{r}
+#| label: tbl-schl-change-res
+#| tbl-cap: "Exploratory Analysis of School Stability as a Mediator of Montessori ITT Effects"
+bind_rows(
+  read_xlsx("../../output/k/cc_itt.xlsx") |> 
+    mutate(spec = "primary"),
+  read_xlsx("../../Output/K/exploratory/school-changes_cc_itt.xlsx") |> 
+    filter(version == "total") |> 
+    mutate(spec = str_c("mediator", term))
+) |> 
+  make_results_tbl(
+    spec_col = "spec",
+    col_names = c(" ", "{ITT}", "{ITT}", "{\\shortstack{School\\\\Changes}}"),
+    foot = str_c(
+      "\\\\textit{N} = 275. Sample sizes were smaller for some outcomes due to skipped questions. Sample sizes are the same as complete case models, minus three control and one treatment participant with missing school information. See Table \\\\ref{tbl-miss-cc} for complete case sample sizes."
+    )
+  ) |> 
+  add_header_above(
+    c(
+      " ", "\\\\textit{Primary}", 
+      "\\\\shortstack{School Changes\\\\\\\\Variable Added}" = 2
+    ),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+# Load data & prep
+df <- read_xlsx("../../output/k/moderators/imp_itt.xlsx") |> 
+  mutate(term = str_remove(term, "itt:"))
+
+foot_moderator <- '"ITT Diff" is the coefficient for the treatment and moderator variable interaction, representing the difference in treatment effects between the reference group and the moderator group. "Eff. Size Diff" is the effect size of this ITT difference.'
+foot_means_moderator <- "The reference control group mean is the weighted mean of the moderator model fixed effects, analagous to the model intercept, with grand mean-centered covariates. Other means are computed by adding the appropriate coefficients to the reference control group mean."
+```
+
+```{r}
+#| label: tbl-mdrtr-race-coef
+#| tbl-cap: "ITT Effect Heterogeneity, Asian and Black Compared to White Children"
+
+foot_n_race <- '\\\\textit{N} = 580. \\\\textit{N} = 305 White; 165 control, 140 treatment. \\\\textit{N} = 39 Asian; 22 control, 17 treatment. \\\\textit{N} = 125 Black; 85 control, 40 treatment. Results not shown for other race and multi race groups for simplicity due to lack of clear pattern of findings. Eight children with missing race data were excluded; 4 control, 4 treatment.'
+
+filter(df, moderator == "race", term %in% c("itt", "asian", "black")) |>
+  make_results_tbl(
+    .g = T, .g_se = T,
+    spec_col = "term",
+    col_names = c(
+      " ", "{ITT}", "{Eff. Size}", 
+      "{\\shortstack{ITT\\\\Diff}}", "{\\shortstack{Eff. Size\\\\Diff}}", 
+      "{\\shortstack{ITT\\\\Diff}}", "{\\shortstack{Eff. Size\\\\Diff}}"
+    ),
+    foot = str_c(
+      foot_n_race, " ", foot_moderator, " ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact
+    )
+  ) |> 
+  add_header_above(
+    c(" ", "White \\\\textit{(ref group)}" = 2, "Asian" = 2, "Black" = 2),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-mdrtr-race-mean
+#| tbl-cap: "Model-Based Means for Asian, Black and White Children"
+filter(df, moderator == "race", term %in% c("itt", "asian", "black")) |>
+  make_results_tbl(
+    .coef = F, .means = T,
+    spec_col = "term",
+    col_headers = c(" ", "White" = 2, "Asian" = 2, "Black" = 2),
+    foot = str_c(foot_n_race, " ", foot_means_moderator)
+  )
+```
+
+```{r}
+#| label: tbl-mdrtr-inc-coef
+#| tbl-cap: "ITT Effect Heterogeneity, Children in Families Making $75k or More Annually Compared to Families Making Less Than $75k"
+
+foot_n_inc <- '\\\\textit{N} = 588. \\\\textit{N} = 232 lower-income; 130 control, 102 treatment. \\\\textit{N} = 356 higher-income; 216 control, 140 treatment.'
+
+filter(df, moderator == "income_over_75k") |> 
+  make_results_tbl(
+    .g = T, .g_se = T,
+    spec_col = "term",
+    col_names = c(
+      " ", "{ITT}", "{Eff. Size}", 
+      "{\\shortstack{ITT\\\\Diff}}", "{\\shortstack{Eff. Size\\\\Diff}}"
+    ),
+    foot = str_c(
+      foot_n_inc, " ", foot_moderator, " ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact
+    )
+  ) |> 
+  add_header_above(
+    c(
+      " ", 
+      "\\\\shortstack{<\\\\$75k Income\\\\\\\\\\\\textit{(ref group)}}" = 2, 
+      "\\\\$75k+ Income" = 2
+    ),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-mdrtr-inc-mean
+#| tbl-cap: "Model-Based Means by Family Income"
+filter(df, moderator == "income_over_75k") |>
+  make_results_tbl(
+    .coef = F, .means = T,
+    spec_col = "term",
+    col_headers = c(" ", "<$75k Income" = 2, "$75k+ Income" = 2),
+    foot = str_c(foot_n_inc, " ", foot_means_moderator)
+  )
+```
+
+```{r}
+#| label: tbl-mdrtr-sex-coef
+#| tbl-cap: "ITT Effect Heterogeneity, Girls Compared to Boys"
+
+foot_n_sex <- '\\\\textit{N} = 588. \\\\textit{N} = 299 boys; 173 control, 126 treatment. \\\\textit{N} = 289 girls; 173 control, 116 treatment.'
+
+filter(df, moderator == "female") |> 
+  make_results_tbl(
+    .g = T, .g_se = T,
+    spec_col = "term",
+    col_names = c(
+      " ", "{ITT}", "{Eff. Size}", 
+      "{\\shortstack{ITT\\\\Diff}}", "{\\shortstack{Eff. Size\\\\Diff}}"
+    ),
+    foot = str_c(
+      foot_n_sex, " ", foot_moderator, " ", foot_vars, " ", foot_se, " ", 
+      foot_eff_size_impact
+    )
+  ) |> 
+  add_header_above(
+    c(" ", "Boys \\\\textit{(ref group)}" = 2, "Girls" = 2),
+    escape = F, line_sep = 5
+  )
+```
+
+```{r}
+#| label: tbl-mdrtr-sex-mean
+#| tbl-cap: "Model-Based Means by Gender"
+filter(df, moderator == "female") |>
+  make_results_tbl(
+    .coef = F, .means = T,
+    spec_col = "term",
+    col_headers = c(" ", "Boys" = 2, "Girls" = 2),
+    foot = str_c(foot_n_sex, " ", foot_means_moderator)
+  )
+```
+
+```{r}
+#| label: tbl-mdes-cc
+#| tbl-cap: "Complete Case Minimum Detectable Effect Sizes at the End of Kindergarten"
+read_xlsx("../../output/k/sensitivity/mdes_cc.xlsx") |> 
+  rename(coef = mdes) |> 
+  make_results_tbl(
+    .se = F, .p = F, coef_name = "MDES",
+    foot = str_c(
+      "See Table \\\\ref{tbl-miss-cc} for sample sizes by outcome. ", foot_vars
+    )
+  )
+```
