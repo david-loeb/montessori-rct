@@ -561,7 +561,6 @@ saveRDS(res_puzz[[5]], here('data/imputed/no_rank_choice/puzz.rds'))
 
 ## Data setup ------------------------------------------------------------------
 
-pak::pkg_install('purrr')
 library(purrr)
 
 # Load imputed datasets

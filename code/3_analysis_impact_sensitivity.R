@@ -459,12 +459,6 @@ write.csv(  # Save
 
 # Propensity for Treatment Weighting & Matching ================================
 
-pak::pkg_install(  # Install if needed & load packages for these analyses
-  c(
-    "WeightIt", "MatchIt", "MatchThem", "cobalt", "marginaleffects", 
-    "mice", "miceadds"
-  )
-)
 library(WeightIt); library(MatchIt); library(MatchThem); library(cobalt)
 
 preds_pscore_mod <- c(  # Preds for pscore mod (the function adds bl outcome)
@@ -689,8 +683,6 @@ write.csv(
 )
 
 # Power: CC MDES ===============================================================
-
-pak::pkg_install('PowerUpR')
 
 params <- map(outcomes_sp24_final, \(y) {  # Get params to calc MDES by outcome
   df_cc <- df_mod[
