@@ -238,7 +238,7 @@ CONSORT Chart for Missing and Observed Data at Each Wave
 ```{r}
 #| label: tbl-domain-avg-eff-size
 #| tbl-cap: "Cognition Domain Average Effect Size"
-read_csv("../../output/k/domain_avg_effect_size.csv") |> 
+read_csv(here("output/k/domain_avg_effect_size.csv")) |> 
   filter(htks == "yes") |> 
   select(miss, gbar, gbar_se, p) |> 
   mutate(
@@ -262,9 +262,9 @@ read_csv("../../output/k/domain_avg_effect_size.csv") |>
 #| label: tbl-pk3-imp
 #| tbl-cap: "Multiple Imputation ITT and CACE Montessori Results at End of PK3"
 bind_rows(
-  read_xlsx("../../output/pk/imp_itt.xlsx") |> 
+  read_csv(here("output/pk/imp_itt.csv")) |> 
     filter(wave == "pk3") |> mutate(spec = "itt"),
-  read_xlsx("../../output/pk/imp_cace.xlsx") |> 
+  read_csv(here("output/pk/imp_cace.csv")) |> 
     filter(wave == "pk3") |> mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -282,9 +282,9 @@ bind_rows(
 #| label: tbl-pk3-cc
 #| tbl-cap: "Complete Case ITT and CACE Montessori Results at End of PK3"
 bind_rows(
-  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+  read_csv(here("output/pk/cc_itt.csv")) |> 
     filter(wave == "pk3") |> mutate(spec = "itt"),
-  read_xlsx("../../output/pk/cc_cace.xlsx") |> 
+  read_csv(here("output/pk/cc_cace.csv")) |> 
     filter(wave == "pk3") |> mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -302,9 +302,9 @@ bind_rows(
 #| label: tbl-pk4-imp
 #| tbl-cap: "Multiple Imputation ITT and CACE Montessori Results at End of PK4"
 bind_rows(
-  read_xlsx("../../output/pk/imp_itt.xlsx") |> 
+  read_csv(here("output/pk/imp_itt.csv")) |> 
     filter(wave == "pk4") |> mutate(spec = "itt"),
-  read_xlsx("../../output/pk/imp_cace.xlsx") |> 
+  read_csv(here("output/pk/imp_cace.csv")) |> 
     filter(wave == "pk4") |> mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -322,9 +322,9 @@ bind_rows(
 #| label: tbl-pk4-cc
 #| tbl-cap: "Complete Case ITT and CACE Montessori Results at End of PK4"
 bind_rows(
-  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+  read_csv(here("output/pk/cc_itt.csv")) |> 
     filter(wave == "pk4") |> mutate(spec = "itt"),
-  read_xlsx("../../output/pk/cc_cace.xlsx") |> 
+  read_csv(here("output/pk/cc_cace.csv")) |> 
     filter(wave == "pk4") |> mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -428,9 +428,9 @@ data.frame(
 #| label: tbl-da-bl-eq
 #| tbl-cap: "Treatment-Control Baseline Covariate Equivalence for Schools With and Without Ranked Choice Lotteries"
 bind_rows(
-  read_xlsx("../../output/equivalence/covariates_rank-choice-ltry-only.xlsx") |>
+  read_csv(here("output/equivalence/covariates_rank-choice-ltry-only.csv")) |>
     mutate(rank_choice = "yes"),
-  read_xlsx("../../output/equivalence/covariates_no-rank-choice-ltry.xlsx") |>
+  read_csv(here("output/equivalence/covariates_no-rank-choice-ltry.csv")) |>
     mutate(rank_choice = "no")
 ) |> 
   filter(y != "age_study") |> 
@@ -459,11 +459,11 @@ bind_rows(
 #| label: tbl-da-itt
 #| tbl-cap: "ITT Estimates for Schools Without Ranked Choice Lotteries"
 bind_rows(
-  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+  read_csv(here("output/k/imp_itt.csv")) |> 
     mutate(spec = "full"),
-  read_xlsx('../../output/k/sensitivity/no-rank-choice_imp_itt.xlsx') |> 
+  read_csv(here('output/k/sensitivity/no-rank-choice_imp_itt.csv')) |> 
     mutate(spec = "imp"),
-  read_xlsx('../../output/k/sensitivity/no-rank-choice_cc_itt.xlsx') |> 
+  read_csv(here('output/k/sensitivity/no-rank-choice_cc_itt.csv')) |> 
     mutate(spec = "cc") |> 
     filter(!grepl("wj.+ws|htks_(all|ord|sq)|easy", y))
 ) |> 
@@ -489,7 +489,7 @@ bind_rows(
 ```{r}
 #| label: tbl-cnsnt-overall
 #| tbl-cap: "Study Consent Rates by Treatment Status"
-df <- read_xlsx('../../data/all_lottery_applicants.xlsx') |> 
+df <- read_csv(here('data/all_lottery_applicants.csv')) |> 
   filter(!is.na(lottery_id))
 bind_rows(
   summarise(df, total = n(), consented = sum(consented)),
@@ -541,7 +541,7 @@ data.frame(
 #| label: tbl-cnsnt-lee-bounds
 #| tbl-cap: "Differential Consent Lee Bounds for ITT Estimates"
 make_results_tbl(
-  read_xlsx("../../output/k/sensitivity/consent_lee-bounds.xlsx"),
+  read_csv(here("output/k/sensitivity/consent_lee-bounds.csv")),
   .se = F, .p = F, .g = T, .g_se = F, 
   spec_col = "bound", group_specs = F,
   col_names = c(" ", "{Lower}", "{Upper}", "{Lower}", "{Upper}"),
@@ -574,7 +574,7 @@ data.frame(
 ```{r}
 #| label: tbl-cnsnt-pstrat-res
 #| tbl-cap: "Treatment-Only Consenter Principal Stratum Mean Required to Produce Spurious Observed Treatment Effects"
-read_xlsx("../../output/k/sensitivity/consent_principal-strat.xlsx") |>
+read_csv(here("output/k/sensitivity/consent_principal-strat.csv")) |>
   make_results_tbl(
     .coef = F, .means = T, 
     .custom = c("comply_mean", "comply_always_diff", "diff_g"),
@@ -590,7 +590,7 @@ read_xlsx("../../output/k/sensitivity/consent_principal-strat.xlsx") |>
 ```{r}
 #| label: tbl-miss-rates-assess
 #| tbl-cap: "Missing Assessment Rates by Study Wave"
-df <- read_xlsx("../../output/equivalence/miss_assess-by-wave.xlsx") |> 
+df <- read_csv(here("output/equivalence/miss_assess-by-wave.csv")) |> 
   pivot_wider(names_from = itt, values_from = matches("b|k")) |> 
   rename_with(~ str_replace(.x, "(.+)_(all|ctrl|treat)", "\\2_\\1")) %>%
   pivot_longer(2:ncol(.), names_to = c(".value", "itt"), names_sep = "_") |> 
@@ -621,9 +621,9 @@ kbl(
 #| label: tbl-miss-cc
 #| tbl-cap: "Complete Case Model Sample Sizes"
 bind_rows(
-  read_xlsx("../../output/pk/cc_itt.xlsx") |> 
+  read_csv(here("output/pk/cc_itt.csv")) |> 
     select(y, wave, matches("^n")),
-  read_xlsx("../../output/equivalence/miss_cc-k.xlsx") |> 
+  read_csv(here("output/equivalence/miss_cc-k.csv")) |> 
     filter(wave == 'k') |> 
     select(y, wave, n_ctrl = ctrl_n, n_treat = treat_n)
 ) |> 
@@ -663,7 +663,7 @@ bind_rows(
 ```{r}
 #| label: tbl-miss-rates-all
 #| tbl-cap: "Missing Data Rates for All Variables at Baseline and Kindergarten"
-read_xlsx("../../output/equivalence/miss_all-bl-k.xlsx") |> 
+read_csv(here("output/equivalence/miss_all-bl-k.csv")) |> 
   mutate(
       y = case_when(
         grepl('wjlw', y) ~ "WJ Letter-Word",
@@ -707,7 +707,7 @@ read_xlsx("../../output/equivalence/miss_all-bl-k.xlsx") |>
 ```{r}
 #| label: tbl-miss-cc-k
 #| tbl-cap: "Participants With Observed Data for All Kindergarten Model Variables (Complete Cases)"
-read_xlsx("../../output/equivalence/miss_cc-k.xlsx") |> 
+read_csv(here("output/equivalence/miss_cc-k.csv")) |> 
   filter(wave == "k") |> 
   select(-ends_with("n")) |> 
   mutate(
@@ -742,11 +742,11 @@ read_xlsx("../../output/equivalence/miss_cc-k.xlsx") |>
 #| label: tbl-miss-bal
 #| tbl-cap: "Differences on Baseline Measures for Participants With Missing Assessment Data Compared to Those With Observed Data"
 
-df <- read_xlsx("../../output/equivalence/miss_equivalence.xlsx") |> 
+df <- read_csv(here("output/equivalence/miss_equivalence.csv")) |> 
   filter(spec == "miss bl assess")
 df <- bind_rows(
   df,
-  read_xlsx("../../output/equivalence/miss_equivalence.xlsx") |> 
+  read_csv(here("output/equivalence/miss_equivalence.csv")) |> 
     filter(
       spec == "miss k, observe bl" & y %in% df$y
       | spec == "miss k, imputed bl" & !(y %in% df$y)
@@ -785,12 +785,12 @@ make_results_tbl(
 #| tbl-cap: "Treatment-Control Balance on Baseline Measures for the Full Sample, Observed Assessment Data Sample, and Inverse Probability of Observed Data Weighted Sample"
 
 df <- bind_rows(
-  read_xlsx(
-    "../../output/k/sensitivity/miss_pscore_cc_balance_mean-across-outcomes.xlsx"
+  read_csv(
+    here("output/k/sensitivity/miss_pscore_cc_balance_mean-across-outcomes.csv")
   ) |> 
     mutate(spec = "compcase"),
-  read_xlsx(
-    "../../output/k/sensitivity/miss_pscore_imp_balance_mean-across-outcomes.xlsx"
+  read_csv(
+    here("output/k/sensitivity/miss_pscore_imp_balance_mean-across-outcomes.csv")
   ) |> 
     mutate(spec = "imp")
 ) |> 
@@ -839,11 +839,11 @@ make_results_tbl(
 #| label: tbl-miss-ipw-res
 #| tbl-cap: "ITT Estimates for Participants With Observed Data Using Regression Weighted by Inverse Probability of Observing Data"
 bind_rows(
-  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+  read_csv(here("output/k/imp_itt.csv")) |> 
     mutate(spec = "full"),
-  read_xlsx("../../output/k/sensitivity/miss_pscore_cc_itt.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_pscore_cc_itt.csv")) |> 
     mutate(spec = "compcase"),
-  read_xlsx("../../output/k/sensitivity/miss_pscore_imp_itt.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_pscore_imp_itt.csv")) |> 
     mutate(spec = "imp")
 ) |> 
   make_results_tbl(
@@ -866,9 +866,9 @@ bind_rows(
 #| label: tbl-miss-ipw-n
 #| tbl-cap: "Inverse Probability of Observing Data Weighted Sample Sizes"
 bind_rows(
-  read_xlsx("../../output/k/sensitivity/miss_pscore_n-wtd_cc.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_pscore_n-wtd_cc.csv")) |> 
     mutate(spec = "compcase"),
-  read_xlsx("../../output/k/sensitivity/miss_pscore_n-wtd_imp.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_pscore_n-wtd_imp.csv")) |> 
     mutate(spec = "imp")
 ) |> 
   make_results_tbl(
@@ -889,19 +889,19 @@ bind_rows(
 #| tbl-cap: "Differential Missingness Lee Bounds for ITT Estimates"
 
 bind_rows(
-  read_xlsx("../../output/k/sensitivity/miss_lee-bounds_cc.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_lee-bounds_cc.csv")) |> 
     mutate(spec = "compcase") |> 
     select(-n_ctrl, -n_treat) |> 
     left_join(
-      read_xlsx("../../output/k/sensitivity/miss_lee-bounds_n-wtd_cc.xlsx") |> 
+      read_csv(here("output/k/sensitivity/miss_lee-bounds_n-wtd_cc.csv")) |> 
         select(y, n_ctrl, n_treat),
       "y"
     ),
-  read_xlsx("../../output/k/sensitivity/miss_lee-bounds_imp.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_lee-bounds_imp.csv")) |> 
     mutate(spec = "imp") |> 
     select(-n_ctrl, -n_treat) |> 
     left_join(
-      read_xlsx("../../output/k/sensitivity/miss_lee-bounds_n-wtd_imp.xlsx") |> 
+      read_csv(here("output/k/sensitivity/miss_lee-bounds_n-wtd_imp.csv")) |> 
         select(y, n_ctrl, n_treat),
       "y"
     )
@@ -946,9 +946,9 @@ bind_rows(
 #| label: tbl-miss-pstrat
 #| tbl-cap: "Treatment-Only Data Provider Principal Stratum Mean Required to Produce Spurious Observed Treatment Effects"
 bind_rows(
-  read_xlsx("../../output/k/sensitivity/miss_principal-strat_cc.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_principal-strat_cc.csv")) |> 
     mutate(spec = "compcase"),
-  read_xlsx("../../output/k/sensitivity/miss_principal-strat_imp.xlsx") |> 
+  read_csv(here("output/k/sensitivity/miss_principal-strat_imp.csv")) |> 
     mutate(spec = "imp")
 ) |> 
   mutate(id = str_c(y, "_", spec)) |> 
@@ -978,7 +978,7 @@ bind_rows(
 #| fig-cap: "Mixture Model ITT Effect Estimates Under Specific MNAR Assumptions. Each panel displays a set of ITT effects estimated under missing not at random (MNAR) assumptions for the outcome noted in the panel title. The MNAR assumptions are specified as effect size differences between study participants with missing and observed data. Each assumption has two components: the difference in conditional outcome means among control group members with missing and observed data, and the difference in treatment effects among treatment group members with missing and observed data. The ITT was estimated under 15 different MNAR assumptions, each combination of effect size differences from -0.50 to 0.50 in increments of 0.25, for each outcome. Bayesian 95% credible intervals, analogous to confidence intervals, are shown for each estimate. Treatment effect size difference magnitudes of at least 0.25, and in some cases greater than 0.50, would be required to bring treatment effects to zero. *N* = 588."
 #| fig-height: 8.25
 #| fig-width: 7
-df <- read_xlsx("../../output/k/sensitivity/miss_mixture.xlsx") |> 
+df <- read_csv(here("output/k/sensitivity/miss_mixture.csv")) |> 
   filter(abs(treat_diff) != .1, !(abs(ctrl_diff) %in% c(.1, .25))) |> 
   mutate(
     title = case_match(
@@ -1005,14 +1005,14 @@ plts <- map(var, make_plots_mix_mod)
 ```{r}
 # Data setup for balance tables & figure 
 df <- left_join(
-  read_xlsx(
-    "../../output/k/sensitivity/pscore-treat_balance_mean-across-outcomes.xlsx"
+  read_csv(
+    here("output/k/sensitivity/pscore-treat_balance_mean-across-outcomes.csv")
   ) |> 
     rename(y = var),
   bind_rows(
-    og_cov <- read_xlsx("../../output/equivalence/covariates.xlsx") |> 
+    og_cov <- read_csv(here("output/equivalence/covariates.csv")) |> 
       select(y, coef_og = coef, g_og = g),
-    og_y <- read_xlsx("../../output/equivalence/outcomes.xlsx") |> 
+    og_y <- read_csv(here("output/equivalence/outcomes.csv")) |> 
       filter(mod == "imp", covars == F) |> 
       select(y, coef_og = coef, g_og = g)
   ),
@@ -1127,9 +1127,9 @@ plts <- pmap(func_params, ~ make_plots_love(..1, ..2))
 #| label: tbl-pscore-res
 #| tbl-cap: "ITT Estimates After Treatment Propensity Score Weighting and Matching"
 bind_rows(
-  read_xlsx("../../output/k/imp_itt.xlsx") |> 
+  read_csv(here("output/k/imp_itt.csv")) |> 
     mutate(spec = "primary"),
-  read_xlsx("../../output/k/sensitivity/pscore-treat_itt.xlsx") |> 
+  read_csv(here("output/k/sensitivity/pscore-treat_itt.csv")) |> 
     rename(coef = estimate, se = std.error, p = p.value) |> 
     mutate(spec = str_c(mod, lotteries))
 ) |> 
@@ -1149,7 +1149,7 @@ bind_rows(
 ```{r}
 #| label: tbl-pscore-ess
 #| tbl-cap: "Effective Sample Sizes for Propensity Score Analyses"
-read_xlsx("../../output/k/sensitivity/pscore-treat_itt.xlsx") |> 
+read_csv(here("output/k/sensitivity/pscore-treat_itt.csv")) |> 
   mutate(id = str_c(y, mod)) |> 
   arrange(desc(mod)) |> 
   rename(n_ctrl = ess_ctrl, n_treat = ess_treat) |> 
@@ -1173,9 +1173,9 @@ read_xlsx("../../output/k/sensitivity/pscore-treat_itt.xlsx") |>
 #| label: tbl-alt-cov-res
 #| tbl-cap: "ITT Estimates Using Alternative Covariate Specifications"
 bind_rows(
-  read_xlsx("../../output/k/covars_cc_itt.xlsx") |> 
+  read_csv(here("output/k/covars_cc_itt.csv")) |> 
     mutate(spec = "compcase"),
-  read_xlsx("../../output/k/covars_imp_itt.xlsx") |> 
+  read_csv(here("output/k/covars_imp_itt.csv")) |> 
     mutate(spec = "imp")
 ) |> 
   filter(!(spec == "compcase" & !grepl("^no |^bl y", covariates))) |> 
@@ -1197,7 +1197,7 @@ bind_rows(
 ```{r}
 #| label: tbl-alt-cov-n
 #| tbl-cap: "Sample Sizes for Complete Case Alternative Covariate Specification Models"
-read_xlsx("../../output/k/covars_cc_itt.xlsx") |> 
+read_csv(here("output/k/covars_cc_itt.csv")) |> 
   filter(grepl("^no |^bl y", covariates)) |> 
   make_results_tbl(
     .coef = F, .ns = T, 
@@ -1212,10 +1212,10 @@ read_xlsx("../../output/k/covars_cc_itt.xlsx") |>
 #| label: tbl-alt-cov-age
 #| tbl-cap: "ITT Estimates With Age as a Covariate"
 bind_rows(
-  read_xlsx("../../output/k/covars_age-ctrl_imp_itt.xlsx") |> 
+  read_csv(here("output/k/covars_age-ctrl_imp_itt.csv")) |> 
     filter(!grepl("^wj", y)) |> 
     mutate(spec = "imp"),
-  read_xlsx("../../Output/K/covars_age-ctrl_cc_itt.xlsx") |> 
+  read_csv(here("Output/K/covars_age-ctrl_cc_itt.csv")) |> 
     filter(!grepl("^wj", y)) |> 
     mutate(spec = "compcase")
 ) |> 
@@ -1307,7 +1307,7 @@ data.frame(
 ```{r}
 #| label: tbl-schl-settings-type
 #| tbl-cap: "Sample Enrollment Percentages by School Type"
-read_xlsx("../../output/k/exploratory/school-settings_descriptives_type.xlsx") |> 
+read_csv(here("output/k/exploratory/school-settings_descriptives_type.csv")) |> 
   mutate(
     schl_type = case_match(
       schl_type,
@@ -1342,11 +1342,11 @@ read_xlsx("../../output/k/exploratory/school-settings_descriptives_type.xlsx") |
 #| tbl-cap: "Sample Enrollment Percentages by School Curriculum"
 
 bind_rows(
-  read_xlsx(
-    "../../output/k/exploratory/school-settings_descriptives_curriculum_agg.xlsx"
+  read_csv(
+    here("output/k/exploratory/school-settings_descriptives_curriculum_agg.csv")
   ),
-  read_xlsx(
-    "../../output/k/exploratory/school-settings_descriptives_curriculum_detail.xlsx"
+  read_csv(
+    here("output/k/exploratory/school-settings_descriptives_curriculum_detail.csv")
   ) |> 
     rename(schl_curric = schl_curric_detail)
 ) |> 
@@ -1378,7 +1378,7 @@ bind_rows(
 ```{r}
 #| label: tbl-schl-settings-span
 #| tbl-cap: "Sample Enrollment Percentages by School Age Range"
-read_xlsx("../../output/k/exploratory/school-settings_descriptives_span.xlsx") |> 
+read_csv(here("output/k/exploratory/school-settings_descriptives_span.csv")) |> 
   mutate(
     schl_span = case_match(
       schl_span, "elem" ~ "Pre-K & Elem", "prek" ~ "Pre-K", 
@@ -1403,8 +1403,8 @@ read_xlsx("../../output/k/exploratory/school-settings_descriptives_span.xlsx") |
 ```{r}
 #| label: tbl-schl-settings-ages
 #| tbl-cap: "Sample Enrollment Percentages by School Classroom Age Group Mix"
-read_xlsx(
-  "../../output/k/exploratory/school-settings_descriptives_class-age-mix.xlsx"
+read_csv(
+  here("output/k/exploratory/school-settings_descriptives_class-age-mix.csv")
 ) |> 
   mutate(across(where(is.numeric), ~ scales::percent(.x, accuracy = .1))) |> 
   kbl(
@@ -1469,7 +1469,7 @@ data.frame(
 
 ```{r}
 # Data setup for pstrat results tables
-df <- read_xlsx("../../output/k/exploratory/principal-strat_bounds_min-max.xlsx") |>
+df <- read_csv(here("output/k/exploratory/principal-strat_bounds_min-max.csv")) |>
   filter(
     grepl("wjlw|wjap|htks|fdigit|^tom", y), miss == "cc", shrink_min_max == 1
   ) |> 
@@ -1565,7 +1565,7 @@ filter(df, takeup_group == "mont", grepl("academic", groups)) |>
 ```{r}
 #| label: tbl-schl-yrs-des
 #| tbl-cap: "Number of Years Enrolled in a Study Montessori, PK3 Through Kindergarten"
-read_xlsx("../../output/k/exploratory/yrs-in-mont_descriptives.xlsx") |> 
+read_csv(here("output/k/exploratory/yrs-in-mont_descriptives.csv")) |> 
   mutate(
     ctrl = scales::percent(ctrl, accuracy = .1),
     treat = scales::percent(treat, accuracy = .1)
@@ -1585,7 +1585,7 @@ read_xlsx("../../output/k/exploratory/yrs-in-mont_descriptives.xlsx") |>
 ```{r}
 #| label: tbl-schl-change-des
 #| tbl-cap: "Number of School Changes During Pre-K and Kindergarten"
-read_xlsx("../../output/k/exploratory/school-changes_descriptives_cc.xlsx") |> 
+read_csv(here("output/k/exploratory/school-changes_descriptives_cc.csv")) |> 
   mutate(
     var = case_match(
       var, "avg" ~ "Mean", "c0" ~ "0", "c1" ~ "1", "c2" ~ "2", "c3" ~ "3"
@@ -1616,9 +1616,9 @@ read_xlsx("../../output/k/exploratory/school-changes_descriptives_cc.xlsx") |>
 #| label: tbl-schl-change-res
 #| tbl-cap: "Exploratory Analysis of School Stability as a Mediator of Montessori ITT Effects"
 bind_rows(
-  read_xlsx("../../output/k/cc_itt.xlsx") |> 
+  read_csv(here("output/k/cc_itt.csv")) |> 
     mutate(spec = "primary"),
-  read_xlsx("../../Output/K/exploratory/school-changes_cc_itt.xlsx") |> 
+  read_csv(here("Output/K/exploratory/school-changes_cc_itt.csv")) |> 
     filter(version == "total") |> 
     mutate(spec = str_c("mediator", term))
 ) |> 
@@ -1640,7 +1640,7 @@ bind_rows(
 
 ```{r}
 # Load data & prep
-df <- read_xlsx("../../output/k/moderators/imp_itt.xlsx") |> 
+df <- read_csv(here("output/k/moderators/imp_itt.csv")) |> 
   mutate(term = str_remove(term, "itt:"))
 
 foot_moderator <- '"ITT Diff" is the coefficient for the treatment and moderator variable interaction, representing the difference in treatment effects between the reference group and the moderator group. "Eff. Size Diff" is the effect size of this ITT difference.'
@@ -1766,7 +1766,7 @@ filter(df, moderator == "female") |>
 ```{r}
 #| label: tbl-mdes-cc
 #| tbl-cap: "Complete Case Minimum Detectable Effect Sizes at the End of Kindergarten"
-read_xlsx("../../output/k/sensitivity/mdes_cc.xlsx") |> 
+read_csv(here("output/k/sensitivity/mdes_cc.csv")) |> 
   rename(coef = mdes) |> 
   make_results_tbl(
     .se = F, .p = F, coef_name = "MDES",
