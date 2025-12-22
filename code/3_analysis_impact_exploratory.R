@@ -14,12 +14,12 @@ setwd(this.path::here())
 source('0_functions_analysis.R')
 source('1_data-setup.R')
 
-# ==== School Settings =========================================================
+# School Settings ==============================================================
 
 #* This section investigates the school types and curricula for treatment and 
 #* control children.
 
-## --- Descriptives ------------------------------------------------------------
+## Descriptives ----------------------------------------------------------------
 
 bind_rows(  # School Type/Sector
   df |> 
@@ -224,9 +224,9 @@ bind_rows(  # School Span (ie childcare, prek, K+)
     na = '', row.names = F
   )
 
-## --- Principal Stratification ------------------------------------------------
+## Principal Stratification ----------------------------------------------------
 
-### --- Setup ------------------------------------------------------------------
+### Setup ----------------------------------------------------------------------
 
 df <- df |>  # Create variables for use in models
   mutate(
@@ -303,7 +303,7 @@ margin_vals <- df |>  # Compute vals from "margins" of a compliance/strata table
   mutate(group = str_remove(group, 'schl_.+_pstrat_')) |> 
   rename(var = `.values`)
 
-### --- Model ------------------------------------------------------------------
+### Model ----------------------------------------------------------------------
 
 groups <- list(  # Sets of school type & curricula that define strata
   c('mont_study', 'pub_nonstudy_all', 'priv_all', 'not_in_school'),
@@ -339,7 +339,7 @@ write.csv(  # Save
   na = '', row.names = F
 )
 
-# ==== Years in Montessori =====================================================
+# Years in Montessori ==========================================================
 
 #* This section creates a descriptive table showing study Montessori 
 #* enrollment patterns by treatment group.
@@ -364,14 +364,14 @@ df |>
     na = '', row.names = F
   )
 
-# ==== School Changes ==========================================================
+# School Changes ===============================================================
 
 #* Explores the potential mediating influence of school stability. A 
 #* variable that controls for school changes is added to the model to see if 
 #* it reduces the magnitude of the treatment effect. There are 2 versions: 
 #* 1) total school changes; 2) binary indicator for ever changed schools.
 
-## --- Descriptives ------------------------------------------------------------
+## Descriptives ----------------------------------------------------------------
 
 # Descriptive table, share of treat & ctrl that changed schools (complete cases)
 df$covars_cc <- complete.cases(select(df, all_of(covariates)))
@@ -397,7 +397,7 @@ df |>
     na = '', row.names = F
   )
 
-## --- Analysis ----------------------------------------------------------------
+## Analysis --------------------------------------------------------------------
 
 c1 <- c(str_c(covariates, '_ctr'), 'schl_changes_total')
 c2 <- c(str_c(covariates, '_ctr'), 'schl_changes_ever')

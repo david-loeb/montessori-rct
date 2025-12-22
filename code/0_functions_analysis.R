@@ -2,9 +2,9 @@
 # Montessori Analysis Functions                                                #
 #==============================================================================#
 
-# ==== Baseline Equivalence ====================================================
+# Baseline Equivalence =========================================================
 
-## --- Complete Case -----------------------------------------------------------
+## Complete Case ---------------------------------------------------------------
 
 test_baseline_eq_cc <- function(var_bl,           # variable
                                 binary = F,       # is outcome binary?
@@ -93,7 +93,7 @@ test_baseline_eq_cc <- function(var_bl,           # variable
     rename_with(~ str_replace(.x, '1', '_treat'))
 }
 
-## --- Imputed -----------------------------------------------------------------
+## Imputed ---------------------------------------------------------------------
 
 test_baseline_eq_imp <- function(dat,  # Imputed dataset
                                  var_bl, 
@@ -236,7 +236,7 @@ test_baseline_eq_imp <- function(dat,  # Imputed dataset
   out
 }
 
-# ==== Impute Data =============================================================
+# Impute Data ==================================================================
 
 impute_data <- function(y,              # outcome
                         covars,         # covariate vector
@@ -373,9 +373,9 @@ impute_data <- function(y,              # outcome
   out
 }
 
-# ==== Impact Models ===========================================================
+# Impact Models ================================================================
 
-## --- Imputed ITT -------------------------------------------------------------
+## Imputed ITT -----------------------------------------------------------------
 
 run_mod_imp_itt <- function(dat,                  # imputed datasets for outcome
                             y,                    # outcome
@@ -643,7 +643,7 @@ run_mod_imp_itt <- function(dat,                  # imputed datasets for outcome
   out
 }
 
-## --- Imputed CACE ------------------------------------------------------------
+## Imputed CACE ----------------------------------------------------------------
 
 run_mod_imp_cace <- function(dat, 
                              y, 
@@ -770,7 +770,7 @@ run_mod_imp_cace <- function(dat,
   out
 }
 
-## --- Complete Case -----------------------------------------------------------
+## Complete Case ---------------------------------------------------------------
 
 run_mod_cc <- function(y, 
                        covars, 
@@ -903,7 +903,7 @@ run_mod_cc <- function(y,
   out
 }
 
-# ==== Domain Average Effect Size ==============================================
+# Domain Average Effect Size ===================================================
 
 get_domain_effect_size <- function(df = df_g,     # Each var's imputed df stacked
                                    cor = corr) {  # Mean correlation among vars
@@ -1003,9 +1003,9 @@ get_domain_effect_size <- function(df = df_g,     # Each var's imputed df stacke
     select(gbar = gbar_final, gbar_se = gbar_se_final, p, t, df = v)
 }
 
-# ==== Treatment Propensity Sensitivity Analyses ===============================
+# Treatment Propensity Sensitivity Analyses ====================================
 
-## --- Treatment Pscore Estimation ---------------------------------------------
+## Treatment Pscore Estimation -------------------------------------------------
 
 get_pscores_tx <- function(df,               # Mult imp data for given outcome
                            y,                # Outcome
@@ -1055,7 +1055,7 @@ get_pscores_tx <- function(df,               # Mult imp data for given outcome
     list_rbind()  # Return as df w/ pscore, wt cols, & prognostic score added
 }
 
-## --- Treatment Pscore Weighted & Matched Models ------------------------------
+## Treatment Pscore Weighted & Matched Models ----------------------------------
 
 run_mod_pscore_tx <- function(df,              # Mult imp df w/ pscores
                               y,               # Outcome
@@ -1233,7 +1233,7 @@ run_mod_pscore_tx <- function(df,              # Mult imp df w/ pscores
   list(res, bal_both, balance_wt, balance_match, wimids_out, mimids_out)
 }
 
-## --- `matchthem()` Modified --------------------------------------------------
+## `matchthem()` Modified ------------------------------------------------------
 
 #* Modification of the `matchthem()` function from the MatchThem package. Allows 
 #* the user to specify a different set of pre-estimated propensity scores for 
@@ -1364,9 +1364,9 @@ matchthem_custom_distance <- function(formula,
   return(output)
 }
 
-# ==== Missingness Propensity Sensitivity Analyses =============================
+# Missingness Propensity Sensitivity Analyses ==================================
 
-## --- Observed Data Pscore Estimation -----------------------------------------
+## Observed Data Pscore Estimation ---------------------------------------------
 
 get_pscores_miss <- function(df,  # Dataset
                              y,   # Outcome
@@ -1430,7 +1430,7 @@ get_pscores_miss <- function(df,  # Dataset
   }
 }
 
-## --- Observed Data Pscore Weighted Models ------------------------------------
+## Observed Data Pscore Weighted Models ----------------------------------------
 
 run_mod_pscore_miss <- function(df, 
                                 y, 
@@ -1489,7 +1489,7 @@ run_mod_pscore_miss <- function(df,
   out
 }
 
-# ==== Lee Bounds ==============================================================
+# Lee Bounds ===================================================================
 
 get_lee_bounds <- function(dat = df,             # Data, default = main df
                            y,                    # Outcome
@@ -1639,7 +1639,7 @@ get_lee_bounds <- function(dat = df,             # Data, default = main df
   out
 }
 
-# ==== Mixture Model ===========================================================
+# Mixture Model ================================================================
 
 run_mod_mixture <- function(y,            # Outcome
                             ctrl_diff,    # Eff size diff, ctrl group, miss v obs
@@ -1716,7 +1716,7 @@ run_mod_mixture <- function(y,            # Outcome
   out
 }
 
-# ==== Principal Stratification ================================================
+# Principal Stratification =====================================================
 
 get_pstrat_bounds <- function(groups,  # Complier counterfactual groups
                               y,       # Outcome

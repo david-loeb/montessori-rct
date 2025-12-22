@@ -17,9 +17,9 @@ source('1_data-setup.R')
 df <- select(df, where(is.numeric))  # Blimp requires all variables be numeric
 covars <- c(covariates[1:4], 'race_num', covariates[5:10])
 
-# ==== K =======================================================================
+# K ============================================================================
 
-## --- ITT ---------------------------------------------------------------------
+## ITT -------------------------------------------------------------------------
 
 res_wjlw <- impute_data(  # I set seed = 66 for convergence; prob not necessary
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66
@@ -70,7 +70,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/puzz_itt.rds')
 
-## --- CACE --------------------------------------------------------------------
+## CACE ------------------------------------------------------------------------
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, sed = 66,
@@ -124,11 +124,11 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/puzz_cace.rds')
 
-# ==== PK4 =====================================================================
+# PK4 ==========================================================================
 
 covars_pk4 <- c('assessed_in_spanish_pk4', covars[2:11])
 
-## --- ITT ---------------------------------------------------------------------
+## ITT -------------------------------------------------------------------------
 
 res_wjlw <- impute_data(
   'wjlw_pk4', covars_pk4, bl_ord = F, brn = 100000, itr = 40000
@@ -176,7 +176,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/pk4/puzz_itt.rds')
 
-## --- CACE --------------------------------------------------------------------
+## CACE ------------------------------------------------------------------------
 
 res_wjlw <- impute_data(
   'wjlw_pk4', covars_pk4, bl_ord = F,
@@ -232,11 +232,11 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/pk4/puzz_cace.rds')
 
-# ==== PK3 =====================================================================
+# PK3 ==========================================================================
 
 covars_pk3 <- c('assessed_in_spanish_pk3', covars[2:11])
 
-## --- ITT ---------------------------------------------------------------------
+## ITT -------------------------------------------------------------------------
 
 res_wjlw <- impute_data(
   'wjlw_pk3', covars_pk3, bl_ord = F, brn = 100000, itr = 40000
@@ -283,7 +283,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/pk3/puzz_itt.rds')
 
-## --- CACE --------------------------------------------------------------------
+## CACE ------------------------------------------------------------------------
 
 res_wjlw <- impute_data(
   'wjlw_pk3', covars_pk3, bl_ord = F,
@@ -339,9 +339,9 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/pk3/puzz_cace.rds')
 
-# ==== Alt Covariate Specs =====================================================
+# Alt Covariate Specs ==========================================================
 
-## --- Baseline outcome only ---------------------------------------------------
+## Baseline outcome only -------------------------------------------------------
 
 covars_bl_y <- c('assessed_in_spanish_k', 'assessed_in_spanish_bl')
 
@@ -391,7 +391,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/alt_covars/bl_y_only/puzz.rds')
 
-## --- All baseline outcomes ---------------------------------------------------
+## All baseline outcomes -------------------------------------------------------
 
 # Use centered household size to help convergence
 covars_bl_y <- c(covars[1:2], 'household_size_log_ctr', covars[5:11])
@@ -445,7 +445,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/alt_covars/bl_y_all/puzz.rds')
 
-## --- Age Control -------------------------------------------------------------
+## Age Control -----------------------------------------------------------------
 
 covars_age <- c(covars, 'age_study')
 
@@ -494,7 +494,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/alt_covars/age_ctrl/puzz.rds')
 
-# ==== Ranked Choice Lotteries Excluded ========================================
+# Ranked Choice Lotteries Excluded =============================================
 
 df_no_rc <- filter(df, lottery_ranked_choice == 0)
 
@@ -555,14 +555,14 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/no_rank_choice/puzz.rds')
 
-# ==== Propensity Scores =======================================================
+# Propensity Scores ============================================================
 
 #* This section estimates propensity scores in the context of each outcome model 
 #* and adds them (along with pscore weights and a prognostic score if 
 #* applicable) to each imputed dataset. The new datasets are then saved to use 
 #* for pscore-based sensitivity analyses.
 
-## --- Data setup --------------------------------------------------------------
+## Data setup ------------------------------------------------------------------
 
 pak::pkg_install('purrr')
 library(purrr)
@@ -607,7 +607,7 @@ df_list <- list(  # rearrange order
   df_list[['puzz']]
 )
 
-## --- Treatment ---------------------------------------------------------------
+## Treatment -------------------------------------------------------------------
 
 preds_pscore_mod <- c(  # Preds for pscore mod (function adds bl outcome)
   'age_study', covariates[!grepl("assess|race", covariates)], 
@@ -633,7 +633,7 @@ for (i in 1:length(y)) {  # Loop through pscore estimation & save data
   )
 }
 
-## --- Missingness -------------------------------------------------------------
+## Missingness -----------------------------------------------------------------
 
 preds_pscore_mod <- c(  # Preds for pscore mod (function adds bl outcome)
   covariates[!grepl("assess|race", covariates)], "racemultiother", "mont_offer"

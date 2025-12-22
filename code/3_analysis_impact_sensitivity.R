@@ -9,13 +9,13 @@ setwd(this.path::here())
 source('0_functions_analysis.R')
 source('1_data-setup.R')
 
-# ==== No Ranked Choice Lotteries ==============================================
+# No Ranked Choice Lotteries ===================================================
 
 #* This section drops schools that enroll students using ranked choice / 
 #* deferred acceptance algorithms and re-estimates the ITT models with just the
 #* fully random lotteries.
 
-## --- Imp ---------------------------------------------------------------------
+## Imp -------------------------------------------------------------------------
 
 # Load imputed datasets
 df_list <- list.files('../data/imputed/no_rank_choice', full.names = T) |> 
@@ -39,7 +39,7 @@ write.csv(  # Save
   na = '', row.names = F
 )
 
-## --- CC ----------------------------------------------------------------------
+## CC --------------------------------------------------------------------------
 
 df_no_rc <- filter(df, lottery_ranked_choice == 0)  # Drop ranked choice
 func_params <- tibble(y = outcomes_k, covars = list(covariates_ctr))  # Func args
@@ -54,7 +54,7 @@ write.csv(  # Save
   '../output/k/sensitivity/no-rank-choice_cc_itt.csv', na = '', row.names = F
 )
 
-# ==== Consent =================================================================
+# Consent ======================================================================
 
 #* This section performs sensitivity analyses related to differential consent.
 
@@ -91,7 +91,7 @@ mean(df_cnsnt$cnsnt_ctrl[df_cnsnt$lottery_id %in% c(30,7,22)])   # lo inc: 27.9%
 mean(df_cnsnt$cnsnt_treat[df_cnsnt$lottery_id %in% c(29,6,21)])  # hi inc: 56.9%
 mean(df_cnsnt$cnsnt_ctrl[df_cnsnt$lottery_id %in% c(29,6,21)])   # hi inc: 30.6%
 
-## --- Lee Bounds --------------------------------------------------------------
+## Lee Bounds ------------------------------------------------------------------
 
 df_list <- list.files('../data/imputed', 'itt', full.names = T) |>
   set_names(~ str_remove(basename(.x), '_itt.rds')) |> 
@@ -111,7 +111,7 @@ write.csv(
   na = '', row.names = F
 )
 
-## --- Principal Stratification ------------------------------------------------
+## Principal Stratification ----------------------------------------------------
 
 # Compute consent rates within treat and control groups
 pct_ctrl_cons <- mean(df_app_tx$consented[df_app_tx$mont_offer == 0])
@@ -137,11 +137,11 @@ write.csv(
   na = '', row.names = F
 )
 
-# ==== Missing Data ============================================================
+# Missing Data =================================================================
 
 #* This section performs sensitivity analyses related to missing data.
 
-## --- Propensity --------------------------------------------------------------
+## Propensity ------------------------------------------------------------------
 
 #* This analysis estimates participants' propensity for having observed data
 #* and uses that to estimate inverse probability weighted models.
@@ -150,7 +150,7 @@ preds_pscore_mod <- c(  # Preds for pscore mod
   covariates[!grepl("assess|race", covariates)], "racemultiother", "mont_offer"
 )
 
-### --- Imp --------------------------------------------------------------------
+### Imp ------------------------------------------------------------------------
 
 #* This version uses imputed baseline covariates and reweights the sample with
 #* observed K assessments.
@@ -207,7 +207,7 @@ map(1:9, \(i) {  # Save weighted Ns
     '../output/k/sensitivity/miss_pscore_n-wtd_imp.csv', na = '', row.names = F
   )
 
-### --- CC ---------------------------------------------------------------------
+### CC -------------------------------------------------------------------------
 
 #* This version reweights the complete case sample by modeling the propensity 
 #* for missing on the baseline and/or K assessment, using just the baseline
@@ -288,11 +288,11 @@ map(1:9, \(i) {  # Save weighted Ns
     '../output/k/sensitivity/miss_pscore_n-wtd_cc.csv', na = '', row.names = F
   )
 
-## --- Lee Bounds --------------------------------------------------------------
+## Lee Bounds ------------------------------------------------------------------
 
 pak::pkg_install('data.table')
 
-### --- Imp --------------------------------------------------------------------
+### Imp ------------------------------------------------------------------------
 
 #* This version uses imputed predictors and does the sensitivity analysis based
 #* on just missing K outcome data.
@@ -331,7 +331,7 @@ map(1:9, \(i) {  # Save weighted Ns
     na = '', row.names = F
   )
 
-### --- CC ---------------------------------------------------------------------
+### CC -------------------------------------------------------------------------
 
 #* This version is based on missing any data, using complete cases.
 
@@ -360,9 +360,9 @@ map(1:9, \(i) {  # Save weighted Ns
     na = '', row.names = F
   )
 
-## --- Principal Stratification ------------------------------------------------
+## Principal Stratification ----------------------------------------------------
 
-### --- Imp --------------------------------------------------------------------
+### Imp ------------------------------------------------------------------------
 
 pct_ctrl_obs <- c()  # Compute observed K data rates within tx group by outcome
 pct_treat_obs <- c()
@@ -395,7 +395,7 @@ write.csv(
   na = '', row.names = F
 )
 
-### --- CC ---------------------------------------------------------------------
+### CC -------------------------------------------------------------------------
 
 pct_ctrl_obs <- c()  # Same as above but for the complete case models
 pct_treat_obs <- c()
@@ -432,7 +432,7 @@ write.csv(
   na = '', row.names = F
 )
 
-## --- Mixture Model -----------------------------------------------------------
+## Mixture Model ---------------------------------------------------------------
 
 # Note: Blimp must be installed to run these models
 
@@ -462,7 +462,7 @@ write.csv(  # Save
   treat_fx, '../output/k/sensitivity/miss_mixture.csv', na = '', row.names = F
 )
 
-# ==== Propensity for Treatment Weighting & Matching ===========================
+# Propensity for Treatment Weighting & Matching ================================
 
 pak::pkg_install(  # Install if needed & load packages for these analyses
   c(
@@ -535,9 +535,9 @@ write.csv(
   na = '', row.names = F
 )
 
-# ==== Covariates ==============================================================
+# Covariates ===================================================================
 
-## --- CC ----------------------------------------------------------------------
+## CC --------------------------------------------------------------------------
 
 func_params_no_covars <- tibble(  # No covars - simple diff in means
   y = outcomes_k, 
@@ -604,7 +604,7 @@ write.csv(  # Save
   treat_fx, '../output/k/sensitivity/covars_cc_itt.csv', na = '', row.names = F
 )
 
-## --- Imp ---------------------------------------------------------------------
+## Imp -------------------------------------------------------------------------
 
 # Baseline outcome (& assess langs) only
 df_list <- list.files('../data/imputed/alt_covars/bl_y_only', full.names = T) |> 
@@ -653,12 +653,12 @@ write.csv(
   '../output/k/sensitivity/covars_imp_itt.csv', na = '', row.names = F
 )
 
-# ==== Age Control =============================================================
+# Age Control ==================================================================
 
 covars_age <- c(covariates, 'age_study')
 covars_age_ctr <- str_c(covars_age, '_ctr')
 
-## --- Imp ---------------------------------------------------------------------
+## Imp -------------------------------------------------------------------------
 
 df_list <- list.files('../data/imputed/alt_covars/age_ctrl', full.names = T) |> 
   set_names(~ str_remove(basename(.x), '\\.rds')) |> 
@@ -679,7 +679,7 @@ write.csv(
   na = '', row.names = F
 )
 
-## --- CC ----------------------------------------------------------------------
+## CC --------------------------------------------------------------------------
 
 func_params <- tibble(y = outcomes_k, covars = list(covars_age_ctr))
 res <- pmap(func_params, ~ run_mod_cc(..1, ..2))
@@ -693,7 +693,7 @@ write.csv(
   na = '', row.names = F
 )
 
-# ==== Power: CC MDES ==========================================================
+# Power: CC MDES ===============================================================
 
 pak::pkg_install('PowerUpR')
 

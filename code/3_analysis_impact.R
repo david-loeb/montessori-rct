@@ -9,9 +9,9 @@ setwd(this.path::here())
 source('0_functions_analysis.R')  # loads analysis functions
 source('1_data-setup.R')  # runs the data setup script
 
-# ==== Imputed =================================================================
+# Imputed ======================================================================
 
-## --- ITT ---------------------------------------------------------------------
+## ITT -------------------------------------------------------------------------
 
 # Load imputed datasets
 df_list <- list.files('../data/imputed', '_itt', full.names = T) |> 
@@ -27,7 +27,7 @@ res <- map2(df_list, outcomes_k, ~ run_mod_imp_itt(.x, .y, full_stats = T)) |>
   list_rbind()
 write.csv(res, '../output/k/imp_itt.csv', na = '', row.names = F)  # Save
 
-## --- CACE --------------------------------------------------------------------
+## CACE ------------------------------------------------------------------------
 
 df_list <- list.files('../data/imputed', '_cace', full.names = T) |> 
   set_names(~ str_remove(basename(.x), '_cace.rds')) |> 
@@ -40,9 +40,9 @@ df_list <- list(
 res <- map2(df_list, outcomes_k, ~ run_mod_imp_cace(.x, .y)) |> list_rbind()
 write.csv(res, '../output/k/imp_cace.csv', na = '', row.names = F)
 
-# ==== Complete Case ===========================================================
+# Complete Case ================================================================
 
-## --- ITT ---------------------------------------------------------------------
+## ITT -------------------------------------------------------------------------
 
 # Create dataframe of function parameters
 func_params <- tibble(y = outcomes_k, covars = list(covariates_ctr))
@@ -53,7 +53,7 @@ treat_fx <- map(res, `[[`, 2) |> list_rbind() |>  # Extract results
   relocate(g, .after = p) |> relocate(g_se, .after = g)
 write.csv(treat_fx, '../output/k/cc_itt.csv', na = '', row.names = F)  # Save
 
-## --- CACE --------------------------------------------------------------------
+## CACE ------------------------------------------------------------------------
 
 func_params <- tibble(y = outcomes_k, covars = list(covariates_ctr))
 res <- pmap(func_params, ~ run_mod_cc(..1, ..2, cace = T))
@@ -62,7 +62,7 @@ treat_fx <- map(res, `[[`, 2) |> list_rbind() |>
   relocate(y) |> relocate(p, .after = se)
 write.csv(treat_fx, '../output/k/cc_cace.csv', na = '', row.names = F)
 
-# ==== Domain Average Effect Sizes =============================================
+# Domain Average Effect Sizes ==================================================
 
 # Get correlations between each variable
 cor_fdig_bdig <- cor(df$fdigit_k, df$bdigit_k, use = "complete.obs")
@@ -75,7 +75,7 @@ corr <- mean(c(  # Get mean correlation among all variables
   cor_fdig_bdig, cor_fdig_tom, cor_bdig_tom, cor_fdig_htks, cor_bdig_htks, cor_tom_htks
 ))
 
-## --- Imp ---------------------------------------------------------------------
+## Imp -------------------------------------------------------------------------
 
 # Load imputed datasets & prep for modeling function
 df_list <- list.files('../data/imputed', '_itt', full.names = T) |> 
@@ -88,7 +88,7 @@ df_htks <- df_list[['htks']] |> mutate(outcome = 'htks_k', y_std = htks_k)
 df_g <- list_rbind(list(df_fdigit, df_bdigit, df_tom, df_htks))  # df for func
 res_imp <- get_domain_effect_size() |> mutate(miss = 'imp')  # Run model
 
-## --- CC ----------------------------------------------------------------------
+## CC --------------------------------------------------------------------------
 
 # Load complete case ITT results
 df_g <- readr::read_csv('../output/k/cc_itt.csv', show_col_types = F, progress = F)
@@ -106,14 +106,14 @@ t <- gbar / gbar_se  # Compute t & p, and put results in a df
 p <- 2 * pt(-abs(t), deg_frdm)
 res_cc <- tibble(gbar = gbar, gbar_se = gbar_se, p = p, t = t, df = deg_frdm, miss = 'cc')
 
-## --- Combine & Save ----------------------------------------------------------
+## Combine & Save --------------------------------------------------------------
 
 bind_rows(res_imp, res_cc) |> relocate(miss) |>
   write.csv('../output/k/domain_avg_effect_size.csv', na = '', row.names = F)
 
-# ==== Moderators ==============================================================
+# Moderators ===================================================================
 
-## --- Imputed -----------------------------------------------------------------
+## Imputed ---------------------------------------------------------------------
 
 # Load imputed datasets & build function parameter dataframe
 df_list <- list.files('../data/imputed/moderators/race', full.names = T) |>
@@ -251,7 +251,7 @@ res |>
   arrange(moderator, y, term) |> 
   write.csv('../output/k/moderators/imp_itt.csv', na = '', row.names = F)
 
-## --- Complete Case -----------------------------------------------------------
+## Complete Case ---------------------------------------------------------------
 
 func_params <- bind_rows(  # Create function argument dataframe
   tibble(
@@ -294,7 +294,7 @@ treat_fx <- map(res, `[[`, 2) |>
   relocate(moderator) |> relocate(y) |> relocate(p, .after = se)
 write.csv(treat_fx, '../output/k/moderators/cc_itt.csv', na = '', row.names = F)
 
-# ==== PK ======================================================================
+# PK ===========================================================================
 
 outcomes_pk4 <- str_replace(outcomes_bl, 'bl', 'pk4')  # Create Y & covar vecs
 outcomes_pk3 <- str_replace(outcomes_bl, 'bl', 'pk3')
@@ -303,9 +303,9 @@ covariates_pk3 <- c('assessed_in_spanish_pk3', covariates[2:14])
 covariates_pk4_ctr <- str_c(covariates_pk4, '_ctr')
 covariates_pk3_ctr <- str_c(covariates_pk3, '_ctr')
 
-## --- Imputed -----------------------------------------------------------------
+## Imputed ---------------------------------------------------------------------
 
-### --- ITT --------------------------------------------------------------------
+### ITT ------------------------------------------------------------------------
 
 # Load imputed datasets
 df_list_pk4 <- list.files('../data/imputed/pk4', '_itt', full.names = T) |> 
@@ -340,7 +340,7 @@ res <- pmap(  # Run models & make results table
   relocate(wave) |> relocate(y)
 write.csv(res, '../output/pk/imp_itt.csv', na = '', row.names = F)  # Save
 
-### --- CACE -------------------------------------------------------------------
+### CACE -----------------------------------------------------------------------
 
 df_list_pk4 <- list.files('../data/imputed/pk4', '_cace', full.names = T) |> 
   set_names(~ str_remove(basename(.x), '_cace.rds')) |> 
@@ -374,7 +374,7 @@ res <- pmap(
   relocate(wave) |> relocate(y)
 write.csv(res, '../output/pk/imp_cace.csv', na = '', row.names = F)
 
-## --- Complete Case -----------------------------------------------------------
+## Complete Case ---------------------------------------------------------------
 
 func_params <- tibble(  # Set up function parameters
   y = c(outcomes_pk4, outcomes_pk3), 
@@ -384,7 +384,7 @@ func_params <- tibble(  # Set up function parameters
   wave = c(rep('pk4', 9), rep('pk3', 9))
 )
 
-### --- ITT --------------------------------------------------------------------
+### ITT ------------------------------------------------------------------------
 
 res <- pmap(func_params, ~ run_mod_cc(..1, ..2))  # Run models
 treat_fx <- map(res, `[[`, 2) |>  # Make results table
@@ -395,7 +395,7 @@ treat_fx <- map(res, `[[`, 2) |>  # Make results table
   relocate(g, .after = p) |> relocate(g_se, .after = g)
 write.csv(treat_fx, '../output/pk/cc_itt.csv', na = '', row.names = F)  # Save
 
-### --- CACE -------------------------------------------------------------------
+### CACE -----------------------------------------------------------------------
 
 res <- pmap(func_params, ~ run_mod_cc(..1, ..2, cace = T))
 treat_fx <- map(res, `[[`, 2) |> 

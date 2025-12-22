@@ -10,7 +10,7 @@ source('1_data-setup.R')
 df <- select(df, where(is.numeric))
 covars <- c(covariates[1:4], 'race_num', covariates[5:10])
 
-# ==== Race ====================================================================
+# Race =========================================================================
 
 #* Note: the imputation function drops those with missing race vars b/c it will 
 #* be too hard for model impute, and centering wont work. 4 treat and 4 control 
@@ -61,7 +61,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/race/puzz.rds')
 
-# ==== Hispanic ================================================================
+# Hispanic =====================================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66, 
@@ -111,7 +111,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/hispanic/puzz.rds')
 
-# ==== Income ================================================================
+# Income =======================================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, 
@@ -167,7 +167,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/income/puzz.rds')
 
-# ==== Education ===============================================================
+# Education ====================================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66, 
@@ -223,7 +223,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/education/puzz.rds')
 
-# ==== Gender ==================================================================
+# Gender =======================================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66, 
@@ -271,7 +271,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/gender/puzz.rds')
 
-# ==== Baseline Outcome ========================================================
+# Baseline Outcome =============================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66, 
@@ -319,7 +319,7 @@ res_puzz <- impute_data(
 )
 saveRDS(res_puzz[[5]], '../data/imputed/moderators/baseline_outcome/puzz.rds')
 
-# ==== HTKS ====================================================================
+# HTKS =========================================================================
 
 res_wjlw <- impute_data(
   'wjlw_k', covars, bl_ord = F, brn = 120000, itr = 40000, sed = 66, 

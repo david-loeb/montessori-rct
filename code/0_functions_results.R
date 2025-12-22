@@ -2,7 +2,7 @@
 # Results Table & Figure Creation Functions                                    #
 #==============================================================================#
 
-# ==== Tables ==================================================================
+# Tables =======================================================================
 
 make_results_tbl <- function(df,
                              .coef = T,
@@ -357,9 +357,9 @@ make_results_tbl <- function(df,
   }
 }
 
-# ==== Figures =================================================================
+# Figures ======================================================================
 
-## --- Effect Size Trends ------------------------------------------------------
+## Effect Size Trends ----------------------------------------------------------
 
 make_plots_eff_size_trend <- function(y_regex, 
                                       title, 
@@ -466,7 +466,7 @@ make_plots_eff_size_trend <- function(y_regex,
   plt
 }
 
-## --- Mixture Model Plots -----------------------------------------------------
+## Mixture Model Plots ---------------------------------------------------------
 
 make_plots_mix_mod <- function(var, dat = df) {
   dat <- filter(dat, y == var)
@@ -515,7 +515,7 @@ make_plots_mix_mod <- function(var, dat = df) {
     ggtitle(unique(dat$title))
 }
 
-## --- Love Plots --------------------------------------------------------------
+## Love Plots ------------------------------------------------------------------
 
 make_plots_love <- function(wt_or_match, all_lot, dat = df, line = F) {
   if (all_lot) lot_spec <- "all" else lot_spec <- "has both treat & ctrl"
@@ -561,4 +561,3 @@ make_plots_love <- function(wt_or_match, all_lot, dat = df, line = F) {
   if (line) plt <- plt + geom_line()
   plt
 }
-

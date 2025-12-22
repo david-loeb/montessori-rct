@@ -11,7 +11,7 @@ setwd(this.path::here())
 source('0_functions_analysis.R')  # loads modeling functions
 source('1_data-setup.R')  # runs the data setup script
 
-# ==== Baseline Covariate Equivalence ==========================================
+# Baseline Covariate Equivalence ===============================================
 
 #* This section examines baseline covariate equivalence for treatment and 
 #* control groups for all participants non-missing on a given covariate, which 
@@ -43,7 +43,7 @@ res <- df |>  # Add unadjusted means
   relocate(n_treat, .after = treat_mean_unadj)  # Save
 write.csv(res, '../output/equivalence/covariates.csv', na = '', row.names = F)
 
-# ==== Baseline Outcome Equivalence ============================================
+# Baseline Outcome Equivalence =================================================
 
 #* This section examines baseline outcome equivalence. Different versions are 
 #* estimated, that vary as to whether they include covariates (`covrs` arg), and
@@ -90,7 +90,7 @@ write.csv(
   '../output/equivalence/outcomes_k_full-stats.csv', na = '', row.names = F
 )
 
-# ==== Baseline All Specs ======================================================
+# Baseline All Specs ===========================================================
 
 #* This section examines baseline equivalence for both covariates and outcomes
 #* subsetting the sample in a number of ways, according to whether specific 
@@ -180,9 +180,9 @@ write.csv(
   '../output/equivalence/all-vars_five-specs.csv', na = '', row.names = F
 )
 
-# ==== Ranked Choice Lotteries =================================================
+# Ranked Choice Lotteries ======================================================
 
-## --- No Ranked Choice Lotteries ----------------------------------------------
+## No Ranked Choice Lotteries --------------------------------------------------
 
 df_eq <- filter(df, lottery_ranked_choice == 0)
 
@@ -206,7 +206,7 @@ write.csv(
   na = '', row.names = F
 )
 
-## --- Rank Choice Lotteries Only ----------------------------------------------
+## Rank Choice Lotteries Only --------------------------------------------------
 
 df_eq <- filter(df, lottery_ranked_choice == 1)
 
@@ -230,9 +230,9 @@ write.csv(
   na = '', row.names = F
 )
 
-# ==== Missingness =============================================================
+# Missingness ==================================================================
 
-## --- Rates by Wave -----------------------------------------------------------
+## Rates by Wave ---------------------------------------------------------------
 
 #* This section calculates rates of missing assessments by wave, overall and 
 #* by treatment condition. The rates are also calculated after excluding schools
@@ -284,7 +284,7 @@ bind_rows(
     '../output/equivalence/miss_assess-by-wave.csv', na = '', row.names = F
   )
 
-## --- All Variables Baseline & K ----------------------------------------------
+## All Variables Baseline & K --------------------------------------------------
 
 #* This section computes missingness rates for each variable individually.
 
@@ -321,7 +321,7 @@ bind_rows(
   arrange(y) |> relocate(ctrl, .after = all) |> 
   write.csv('../output/equivalence/miss_all-bl-k.csv', na = '', row.names = F)
 
-## --- Complete Cases ----------------------------------------------------------
+## Complete Cases --------------------------------------------------------------
 
 #* This section computes the share of participants with observed data on all
 #* model variables (complete cases) for each outcome in each follow-up wave.
@@ -359,7 +359,7 @@ df |>
   relocate(all_n, .after = wave) |> relocate(all_pct, .after = all_n) |> 
   write.csv('../output/equivalence/miss_cc-k.csv', na = '', row.names = F)
 
-## --- Equivalence on Baseline Variables ---------------------------------------
+## Equivalence on Baseline Variables -------------------------------------------
 
 #* These tests replace the treatment indicator with a missing indicator to 
 #* "trick" the baseline equivalence test function into comparing those w/ and w/o
@@ -442,4 +442,3 @@ write.csv(  # Save
   bind_rows(res1, res2, res3, res4, res5),
   '../output/equivalence/miss_equivalence.csv', na = '', row.names = F
 )
-
