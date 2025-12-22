@@ -2,19 +2,49 @@
 
 The code in this repo enables replication of all analyses in the [public Montessori preschool evaluation RCT](https://www.pnas.org/doi/10.1073/pnas.2506130122).
 
-## Downloading code files
+## Downloading files
 
-To download the code files in this repo, click the green "Code" button toward the top of this page and then click "Download ZIP." (You can of course also clone the repo if you are familiar with Git.)
+To download the files in this repo, click the green "Code" button toward the top of this page and then click "Download ZIP." (You can of course also clone the repo if you are familiar with Git.)
+
+## Setup
+
+A one-time setup process must be done to install the packages neede to run the code and create the folders needed to store data and output. The project uses the renv framework to install all the correct versions of packages in a project-specific package library rather than the system-wide library on your computer.
+
+There are three options for completing this setup:
+
+### Option 1: RStudio approach
+
+- Double click the "montessori-rct.Rproj" file. This will open the project in RStudio and automatically begin the process of setting up renv.
+- Then run the "setup.R" either by running "source('setup.R')" in the console or opening the file and running the script. This will install the packages and create the folders.
+
+### Option 2: VS Code / Positron approach
+
+- Open the project folder from within VS Code or Positron. This will automatically begin the process of setting up renv.
+- Then run the "setup.R" either by running "source('setup.R')" in the console or opening the file and running the script. This will install the packages and create the folders.
+
+### Option 3: Manual renv setup
+
+- Open the "setup.R" script.
+- Uncomment the call to `setwd()`, insert the file path the project folder on your computer, and run.
+- Uncomment `renv::activate()` and run.
+- Restart your R session.
+- Run the rest of the "setup.R" script.
+
+### Activating renv in future sessions
+
+Each time you work with the project code, renv must be activated so that the session uses the project-specific package library. To do this, you just take the same initial step that you took in the setup, i.e. either
+
+- double click "montessori-rct.Rproj",
+- open the project within the VS Code or Positron,
+- or call `renv::activate('/insert/path/to/project/folder')` then restart the R session.
 
 ## Code files overview
 
-The numeric prefix for each script indicates the general order in which scripts should be run. The '0_folder-setup.R' script must be run first to create the folder structure required to store data and output. The other '0' and '1' scripts are run at the beginning of the subsequent scripts as needed, so you will not need to open and run those scripts directly. The '2' scripts perform multiple imputation and save imputed datasets. You will need to run these directly before conducting analyses that use the multiply-imputed data. The '3' scripts perform all analyses, broken into four categories: 'equivalence' examines equivalence between treatment and control groups; 'impact' has the main impact analyses; 'impact_sensitivity' has sensitivity analyses for the main impact analyses; and 'impact_exploratory' has exploratory analyses that follow up on the main impact analyses. The '4' file is a Quarto file that produces results tables and figures (more details below) and the '\_quarto.yml' file sets its output folder.
+The numeric prefix for each script indicates the general order in which scripts should be run. The '0' and '1' scripts are run at the beginning of the subsequent scripts as needed, so you will not need to open and run those scripts directly. The '2' scripts perform multiple imputation and save imputed datasets. You will need to run these directly before conducting analyses that use the multiply-imputed data. The '3' scripts perform all analyses, broken into four categories: 'equivalence' examines equivalence between treatment and control groups; 'impact' has the main impact analyses; 'impact_sensitivity' has sensitivity analyses for the main impact analyses; and 'impact_exploratory' has exploratory analyses that follow up on the main impact analyses. The '4' file is a Quarto file that produces results tables and figures (more details below) and the '\_quarto.yml' file sets its output folder.
 
 ## Running the code
 
-To reiterate, '0_folder-setup.R' must be run first to create the necessary data and output storage folders. You only need to run this script one time.
-
-For the other scripts, the first step to running the code is always to run the setup directly below the script title, where package installation and loading, data and function loading, and any other setup is handled. The code is then broken into sections, with section and sub-section hierarchies denoted by the number of `#` at the beginning of the section title. All code necessary to run a given section is contained within that section. To run code in a sub-section, make sure to first run all code in its "parent" section(s).
+For the other scripts, the first step to running the code is always to run the setup directly below the script title, where package, data and function loading and any other setup is handled. The code is then broken into sections, with section and sub-section hierarchies denoted by the number of `#` at the beginning of the section title. All code necessary to run a given section is contained within that section. To run code in a sub-section, make sure to first run all code in its "parent" section(s).
 
 ## Data
 
@@ -33,12 +63,6 @@ Rendering the tables and figures requires Quarto, a free scientific publishing s
 ### Blimp
 
 Multiple imputation is handled with the free Blimp software. Blimp is called through R using the {rblimp} package. Blimp can be [downloaded here](https://www.appliedmissingdata.com/blimp).
-
-## R package installation
-
-The code uses a number of external user-created R packages. The {pak} R package is used in each script to handle the installation and updating of the other external packages. It will install any packages not already installed. If you already have a package installed, if there is a new version available, it will ask if you want to update. If you already have the latest version installed, it will do nothing. You can also set a specific folder to install the packages to if you don't want to install them in your general R package library. See the [{pak} documentation site](http://pak.r-lib.org) for more details.
-
-The {pacman} package is used instead in the table and figure generation Quarto script for simplicity. It installs any packages not already installed and otherwise leaves packages as-is. It also loads all packages. If you would like more control over package installation, feel free to switch to {pak} or another installation method in this document.
 
 ## Code comments
 
