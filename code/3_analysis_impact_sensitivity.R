@@ -2,12 +2,9 @@
 # Sensitivity Analyses                                                         #
 #==============================================================================#
 
-if (!require('pak')) install.packages('pak')
-pak::pkg_install(c('this.path', 'tibble', 'fixest', 'broom'))
 library(purrr); library(tibble)
-setwd(this.path::here())
-source('0_functions_analysis.R')
-source('1_data-setup.R')
+source(here('code/0_functions_analysis.R'))
+source(here('code/1_data-setup.R'))
 
 # No Ranked Choice Lotteries ===================================================
 
@@ -18,7 +15,7 @@ source('1_data-setup.R')
 ## Imp -------------------------------------------------------------------------
 
 # Load imputed datasets
-df_list <- list.files('../data/imputed/no_rank_choice', full.names = T) |> 
+df_list <- list.files(here('data/imputed/no_rank_choice'), full.names = T) |> 
   set_names(~ str_remove(basename(.x), '\\.rds')) |> 
   map(readRDS)
 df_list <- list(  # reorder
@@ -35,7 +32,7 @@ res <- map2(  # Run models
   ~ run_mod_imp_itt(.x, .y, covars = covars_hh_ctr, full_stats = T)
 ) |> list_rbind()
 write.csv(  # Save
-  res, '../output/k/sensitivity/no-rank-choice_imp_itt.csv', 
+  res, here('output/k/sensitivity/no-rank-choice_imp_itt.csv'), 
   na = '', row.names = F
 )
 
@@ -51,7 +48,7 @@ treat_fx <- map(res, `[[`, 2) |>  # Combine into results table
   relocate(g, .after = p) |> relocate(g_se, .after = g)
 write.csv(  # Save
   treat_fx, 
-  '../output/k/sensitivity/no-rank-choice_cc_itt.csv', na = '', row.names = F
+  here('output/k/sensitivity/no-rank-choice_cc_itt.csv'), na = '', row.names = F
 )
 
 # Consent ======================================================================
@@ -59,7 +56,7 @@ write.csv(  # Save
 #* This section performs sensitivity analyses related to differential consent.
 
 df_app <- readr::read_csv(  # All lottery applicants dataset
-  '../data/all_lottery_applicants.csv', show_col_types = F, progress = F
+  here('data/all_lottery_applicants.csv'), show_col_types = F, progress = F
 )  # Drop schools w/o tx info for non-consenters
 df_app_tx <- filter(df_app, !is.na(mont_offer))
 df_cnsnt <- df_app_tx |>  # Consent rates by treatment status by lottery
@@ -93,7 +90,7 @@ mean(df_cnsnt$cnsnt_ctrl[df_cnsnt$lottery_id %in% c(29,6,21)])   # hi inc: 30.6%
 
 ## Lee Bounds ------------------------------------------------------------------
 
-df_list <- list.files('../data/imputed', 'itt', full.names = T) |>
+df_list <- list.files(here('data/imputed'), 'itt', full.names = T) |>
   set_names(~ str_remove(basename(.x), '_itt.rds')) |> 
   map(readRDS)
 df_list <- list(
@@ -107,7 +104,7 @@ set.seed(6)  # For random tie-breaks
 res <- map2(df_list, outcomes_k, ~ get_lee_bounds(.x, .y, imp = T, cnsnt = T)) |> 
   map(`[[`, 2) |> list_rbind()
 write.csv(
-  res, '../output/k/sensitivity/consent_lee-bounds.csv',
+  res, here('output/k/sensitivity/consent_lee-bounds.csv'),
   na = '', row.names = F
 )
 
@@ -121,7 +118,7 @@ pct_treat_non_cons <- 1 - pct_treat_cons
 wt_always <- pct_ctrl_cons / pct_treat_cons
 
 res <- readr::read_csv(  # Load multiple imputation ITT results
-  '../output/k/imp_itt.csv', show_col_types = F, progress = F
+  here('output/k/imp_itt.csv'), show_col_types = F, progress = F
 ) |> 
   mutate(  # Compute "treat-only consenter" mean required for spurious result
     comply_mean = (treat_mean - ctrl_mean * wt_always) / (1 - wt_always),
@@ -133,7 +130,7 @@ res <- readr::read_csv(  # Load multiple imputation ITT results
     coef, se, p, g
   )
 write.csv(
-  res, '../output/k/sensitivity/consent_principal-strat.csv',
+  res, here('output/k/sensitivity/consent_principal-strat.csv'),
   na = '', row.names = F
 )
 
@@ -156,7 +153,7 @@ preds_pscore_mod <- c(  # Preds for pscore mod
 #* observed K assessments.
 
 df_list <- list.files(
-  '../data/imputed/propensity_scores', 'miss', full.names = T
+  here('data/imputed/propensity_scores'), 'miss', full.names = T
 ) |>
   set_names(~ str_remove(basename(.x), '_miss.rds')) |> 
   map(readRDS)
@@ -177,20 +174,20 @@ res_balance <- map(res, `[[`, 1) |>  # Get balance stats
   rename_with(~ str_replace(.x, 'coef', 'diff')) |> 
   filter(var != 'mont_offer')
 write.csv(  # Save balance stats
-  res_balance, '../output/k/sensitivity/miss_pscore_imp_balance.csv',
+  res_balance, here('output/k/sensitivity/miss_pscore_imp_balance.csv'),
   na = '', row.names = F
 )
 res_balance_mean <- res_balance |>  # Calc mean balance across outcomes
   summarise(across(!matches('^y$'), mean), .by = var)
 write.csv(  # Save mean balance stats
   res_balance_mean,
-  '../output/k/sensitivity/miss_pscore_imp_balance_mean-across-outcomes.csv',
+  here('output/k/sensitivity/miss_pscore_imp_balance_mean-across-outcomes.csv'),
   na = '', row.names = F
 )
 
 map(res, `[[`, 2) |> list_rbind() |>  # Get ITT model results
   write.csv(  # Save model results
-    '../output/k/sensitivity/miss_pscore_imp_itt.csv', na = '', row.names = F
+    here('output/k/sensitivity/miss_pscore_imp_itt.csv'), na = '', row.names = F
   )
 
 map(1:9, \(i) {  # Save weighted Ns
@@ -204,7 +201,7 @@ map(1:9, \(i) {  # Save weighted Ns
   tidyr::pivot_wider(names_from = mont_offer, values_from = n) |> 
   rename(n_ctrl = `0`, n_treat = `1`) |> 
   write.csv(
-    '../output/k/sensitivity/miss_pscore_n-wtd_imp.csv', na = '', row.names = F
+    here('output/k/sensitivity/miss_pscore_n-wtd_imp.csv'), na = '', row.names = F
   )
 
 ### CC -------------------------------------------------------------------------
@@ -253,14 +250,14 @@ res_balance <- map(res, `[[`, 1) |>  # Get balance stats
   rename_with(~ str_replace(.x, 'coef', 'diff')) |> 
   filter(var != 'mont_offer')
 write.csv(
-  res_balance, '../output/k/sensitivity/miss_pscore_cc_balance.csv',
+  res_balance, here('output/k/sensitivity/miss_pscore_cc_balance.csv'),
   na = '', row.names = F
 )
 res_balance_mean <- res_balance |>  # Get mean balance stats across outcomes
   summarise(across(!matches('^y$'), mean), .by = var)
 write.csv(
   res_balance_mean,
-  '../output/k/sensitivity/miss_pscore_cc_balance_mean-across-outcomes.csv',
+  here('output/k/sensitivity/miss_pscore_cc_balance_mean-across-outcomes.csv'),
   na = '', row.names = F
 )
 
@@ -271,7 +268,7 @@ res_itt <- map(res, `[[`, 2) |>  # Get ITT model results
     n_ctrl, n_treat, sd_ctrl, sd_treat
   )
 write.csv(
-  res_itt, '../output/k/sensitivity/miss_pscore_cc_itt.csv',
+  res_itt, here('output/k/sensitivity/miss_pscore_cc_itt.csv'),
   na = '', row.names = F
 )
 
@@ -285,12 +282,10 @@ map(1:9, \(i) {  # Save weighted Ns
   tidyr::pivot_wider(names_from = mont_offer, values_from = n) |> 
   rename(n_ctrl = `0`, n_treat = `1`) |> 
   write.csv(
-    '../output/k/sensitivity/miss_pscore_n-wtd_cc.csv', na = '', row.names = F
+    here('output/k/sensitivity/miss_pscore_n-wtd_cc.csv'), na = '', row.names = F
   )
 
 ## Lee Bounds ------------------------------------------------------------------
-
-pak::pkg_install('data.table')
 
 ### Imp ------------------------------------------------------------------------
 
@@ -298,7 +293,7 @@ pak::pkg_install('data.table')
 #* on just missing K outcome data.
 
 df_list <- list.files(
-  '../data/imputed', 'itt', full.names = T
+  here('data/imputed'), 'itt', full.names = T
 ) |>
   set_names(~ str_remove(basename(.x), '_itt.rds')) |> 
   map(readRDS)
@@ -313,7 +308,7 @@ set.seed(6)  # For random tie-breaks
 res <- map2(df_list, outcomes_k, ~ get_lee_bounds(.x, .y, imp = T))
 res |> map(`[[`, 2) |> list_rbind() |> 
   write.csv(
-    '../output/k/sensitivity/miss_lee-bounds_imp.csv', na = '', row.names = F
+    here('output/k/sensitivity/miss_lee-bounds_imp.csv'), na = '', row.names = F
   )
 
 map(1:9, \(i) {  # Save weighted Ns
@@ -327,7 +322,7 @@ map(1:9, \(i) {  # Save weighted Ns
   tidyr::pivot_wider(names_from = mont_offer, values_from = n) |> 
   rename(n_ctrl = `0`, n_treat = `1`) |> 
   write.csv(
-    '../output/k/sensitivity/miss_lee-bounds_n-wtd_imp.csv',
+    here('output/k/sensitivity/miss_lee-bounds_n-wtd_imp.csv'),
     na = '', row.names = F
   )
 
@@ -343,7 +338,7 @@ set.seed(6)
 res <- map(outcomes_k, ~ get_lee_bounds(df_trim, .x))
 res |> map(`[[`, 2) |> list_rbind() |> 
   write.csv(
-    '../output/k/sensitivity/miss_lee-bounds_cc.csv', na = '', row.names = F
+    here('output/k/sensitivity/miss_lee-bounds_cc.csv'), na = '', row.names = F
   )
 
 map(1:9, \(i) {  # Save weighted Ns
@@ -356,7 +351,7 @@ map(1:9, \(i) {  # Save weighted Ns
   tidyr::pivot_wider(names_from = mont_offer, values_from = n) |> 
   rename(n_ctrl = `0`, n_treat = `1`) |> 
   write.csv(
-    '../output/k/sensitivity/miss_lee-bounds_n-wtd_cc.csv', 
+    here('output/k/sensitivity/miss_lee-bounds_n-wtd_cc.csv'), 
     na = '', row.names = F
   )
 
@@ -376,7 +371,7 @@ for(i in 1:9) {
 }
 
 res <- readr::read_csv(  # Load multiple imputation ITT results
-  '../output/k/imp_itt.csv', show_col_types = F, progress = F
+  here('output/k/imp_itt.csv'), show_col_types = F, progress = F
 ) |> 
   mutate(  # Compute "treat-only observed" mean needed for spurious result
     pct_ctrl_obs = pct_ctrl_obs,
@@ -391,7 +386,7 @@ res <- readr::read_csv(  # Load multiple imputation ITT results
     pct_ctrl_obs, pct_treat_obs, wt, coef, se, p, g
   )
 write.csv(
-  res, '../output/k/sensitivity/miss_principal-strat_imp.csv',
+  res, here('output/k/sensitivity/miss_principal-strat_imp.csv'),
   na = '', row.names = F
 )
 
@@ -413,7 +408,7 @@ for (i in 1:9) {
 }
 
 res <- readr::read_csv(
-  '../output/k/cc_itt.csv', show_col_types = F, progress = F
+  here('output/k/cc_itt.csv'), show_col_types = F, progress = F
 ) |> 
   mutate(
     pct_ctrl_obs = pct_ctrl_obs,
@@ -428,7 +423,7 @@ res <- readr::read_csv(
     pct_ctrl_obs, pct_treat_obs, wt, coef, se, p, g
   )
 write.csv(
-  res, '../output/k/sensitivity/miss_principal-strat_cc.csv',
+  res, here('output/k/sensitivity/miss_principal-strat_cc.csv'),
   na = '', row.names = F
 )
 
@@ -459,7 +454,7 @@ for (i in 1:nrow(func_params)) {
 }
 treat_fx <- map(res, `[[`, 4) |> list_rbind()  # Extract treat effect results
 write.csv(  # Save
-  treat_fx, '../output/k/sensitivity/miss_mixture.csv', na = '', row.names = F
+  treat_fx, here('output/k/sensitivity/miss_mixture.csv'), na = '', row.names = F
 )
 
 # Propensity for Treatment Weighting & Matching ================================
@@ -479,7 +474,7 @@ preds_pscore_mod <- c(  # Preds for pscore mod (the function adds bl outcome)
 
 # Version 1: Lotteries w/ both treatment & control participants only
 df_list <- list.files(  # Load imp datasets w/ pscores
-  '../data/imputed/propensity_scores', 'both-tx', full.names = T
+  here('data/imputed/propensity_scores'), 'both-tx', full.names = T
 ) |>
   set_names(~ str_remove(basename(.x), '_both-tx.rds')) |> 
   map(readRDS)
@@ -499,7 +494,7 @@ bal_both_out <- map(res_both_tx, `[[`, 2) |>  # Combine covar balance results
 
 # Version 2: Full sample
 df_list <- list.files(
-  '../data/imputed/propensity_scores', 'all-obs', full.names = T
+  here('data/imputed/propensity_scores'), 'all-obs', full.names = T
 ) |>
   set_names(~ str_remove(basename(.x), '_all-obs.rds')) |> 
   map(readRDS)
@@ -531,7 +526,7 @@ bal_means <- bind_rows(bal_all_out, bal_both_out) |>
   summarise(across(matches('mean$|diff$'), mean), .by = c(var, mod, lotteries))
 write.csv(
   bal_means,
-  '../output/k/sensitivity/pscore-treat_balance_mean-across-outcomes.csv',
+  here('output/k/sensitivity/pscore-treat_balance_mean-across-outcomes.csv'),
   na = '', row.names = F
 )
 
@@ -601,13 +596,13 @@ treat_fx <- map(res, `[[`, 2) |> list_rbind() |>  # Combine into results table
   relocate(g, .after = p) |> relocate(g_se, .after = g) |> 
   mutate(covariates = func_params$version)
 write.csv(  # Save
-  treat_fx, '../output/k/sensitivity/covars_cc_itt.csv', na = '', row.names = F
+  treat_fx, here('output/k/sensitivity/covars_cc_itt.csv'), na = '', row.names = F
 )
 
 ## Imp -------------------------------------------------------------------------
 
 # Baseline outcome (& assess langs) only
-df_list <- list.files('../data/imputed/alt_covars/bl_y_only', full.names = T) |> 
+df_list <- list.files(here('data/imputed/alt_covars/bl_y_only'), full.names = T) |> 
   set_names(~ str_remove(basename(.x), '\\.rds')) |> 
   map(readRDS)
 df_list_func <- list(
@@ -626,7 +621,7 @@ res_bl_y_only <- map2(
   mutate(covariates = 'bl y & assess langs only')
 
 # All baseline outcomes
-df_list <- list.files('../data/imputed/alt_covars/bl_y_all', full.names = T) |> 
+df_list <- list.files(here('data/imputed/alt_covars/bl_y_all'), full.names = T) |>
   set_names(~ str_remove(basename(.x), '\\.rds')) |> 
   map(readRDS)
 df_list <- list(
@@ -650,7 +645,7 @@ res_bl_y_all <- map2(
 
 write.csv(
   bind_rows(res_bl_y_only, res_bl_y_all),
-  '../output/k/sensitivity/covars_imp_itt.csv', na = '', row.names = F
+  here('output/k/sensitivity/covars_imp_itt.csv'), na = '', row.names = F
 )
 
 # Age Control ==================================================================
@@ -660,7 +655,7 @@ covars_age_ctr <- str_c(covars_age, '_ctr')
 
 ## Imp -------------------------------------------------------------------------
 
-df_list <- list.files('../data/imputed/alt_covars/age_ctrl', full.names = T) |> 
+df_list <- list.files(here('data/imputed/alt_covars/age_ctrl'), full.names = T) |> 
   set_names(~ str_remove(basename(.x), '\\.rds')) |> 
   map(readRDS)
 
@@ -675,7 +670,7 @@ res <- map2(
   ~ run_mod_imp_itt(.x, .y, covars = covars_age, full_stats = T)
 ) |> list_rbind()
 write.csv(
-  res, '../output/k/sensitivity/covars_age-ctrl_imp_itt.csv', 
+  res, here('output/k/sensitivity/covars_age-ctrl_imp_itt.csv'), 
   na = '', row.names = F
 )
 
@@ -689,7 +684,7 @@ treat_fx <- map(res, `[[`, 2) |>
   relocate(y) |> relocate(p, .after = se) |> 
   relocate(g, .after = p) |> relocate(g_se, .after = g)
 write.csv(
-  treat_fx, '../output/k/sensitivity/covars_age-ctrl_cc_itt.csv', 
+  treat_fx, here('output/k/sensitivity/covars_age-ctrl_cc_itt.csv'), 
   na = '', row.names = F
 )
 
@@ -730,4 +725,4 @@ res <- data.frame(  # Save results
   y = outcomes_sp24_final,
   mdes = mdes_cc
 )
-write.csv(res, '../output/k/sensitivity/mdes_cc.xlsx', na = '', row.names = F)
+write.csv(res, here('output/k/sensitivity/mdes_cc.csv'), na = '', row.names = F)

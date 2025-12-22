@@ -2,13 +2,12 @@
 # Data Setup for Montessori Analyses                                           #
 #==============================================================================#
 
-if (!require('pak')) install.packages('pak')
-pak::pkg_install(c('this.path', 'readr', 'dplyr', 'stringr'))
-suppressMessages(library(dplyr)); library(stringr)
-setwd(this.path::here())
+suppressMessages(library(here))  # Load packages
+suppressMessages(library(dplyr))
+library(stringr)
 
 df <- readr::read_csv(  # Load data
-  '../data/analytic_sample_data.csv', show_col_types = F, progress = F
+  here('data/analytic_sample_data.csv'), show_col_types = F, progress = F
 )
 
 outcomes_bl <- c(  # Set up variable vectors

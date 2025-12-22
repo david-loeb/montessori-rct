@@ -22,15 +22,16 @@ format:
 ---
 
 ::: {.content-hidden}
-Render this file to produce a PDF of the results tables and figure from the main article. Two versions of the figure are produced, a large and a medium-sized version. The resulting PDF will be in the 'output/tables_figures' folder. Package installation and loading is handled with the `pacman` package rather than `pak` for simplicity. `pacman::p_load()` will install any package not already installed and do nothing otherwise (i.e., it will not update already-installed packages). It will also load all packages.
+Render this file to produce a PDF of the results tables and figure from the main article. Two versions of the figure are produced, a large and a medium-sized version. The resulting PDF will be in the 'output/tables_figures' folder.
 :::
 
 ```{r}
 #| label: setup
-pacman::p_load(
-  readr, dplyr, stringr, tidyr, purrr, kableExtra, glue, ggplot2, patchwork
-)
-source("0_functions_results.R")
+suppressMessages(library(here)); library(readr)
+suppressMessages(library(dplyr)); library(stringr); library(tidyr)
+library(purrr); library(kableExtra); library(glue)
+library(ggplot2); library(patchwork)
+source(here("code/0_functions_results.R"))
 options(knitr.kable.NA = "")
 showtext::showtext_auto()
 showtext::showtext_opts(dpi = 1200)
@@ -48,7 +49,7 @@ foot_stars <- "** p < .01, * p < .05, + p < .1"
 #| label: tbl-bl-equiv-covs
 #| tbl-cap: "Baseline Sample Characteristics and Equivalence"
 read_csv(
-  "../output/equivalence/covariates.csv", show_col_types = F, progress = F
+  here("output/equivalence/covariates.csv"), show_col_types = F, progress = F
 ) |> 
   filter(y != "racemultiother") |> 
   mutate(
@@ -77,7 +78,7 @@ read_csv(
 #| label: tbl-bl-equiv-y
 #| tbl-cap: "Baseline Differences in Outcome Measures Before and After Multiple Imputation"
 read_csv(
-  "../output/equivalence/outcomes_k_full-stats.csv", 
+  here("output/equivalence/outcomes_k_full-stats.csv"), 
   show_col_types = F, progress = F
 ) |> 
   mutate(spec = ifelse(mod == "cc", "compcase", "imp")) |> 
@@ -96,9 +97,9 @@ read_csv(
 #| label: tbl-res-imp
 #| tbl-cap: "ITT and CACE Estimates at End of Kindergarten, Multiple Imputation"
 bind_rows(
-  read_csv('../output/k/imp_itt.csv', show_col_types = F, progress = F) |> 
+  read_csv(here('output/k/imp_itt.csv'), show_col_types = F, progress = F) |> 
     mutate(spec = "itt"),
-  read_csv('../output/k/imp_cace.csv', show_col_types = F, progress = F) |> 
+  read_csv(here('output/k/imp_cace.csv'), show_col_types = F, progress = F) |> 
     mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -116,9 +117,9 @@ bind_rows(
 #| label: tbl-res-cc
 #| tbl-cap: "ITT and CACE Estimates at End of Kindergarten, Complete Cases"
 bind_rows(
-  read_csv('../output/k/cc_itt.csv', show_col_types = F, progress = F) |> 
+  read_csv(here('output/k/cc_itt.csv'), show_col_types = F, progress = F) |> 
     mutate(spec = "itt"),
-  read_csv('../output/k/cc_cace.csv', show_col_types = F, progress = F) |> 
+  read_csv(here('output/k/cc_cace.csv'), show_col_types = F, progress = F) |> 
     mutate(spec = "cace")
 ) |> 
   make_results_tbl(
@@ -136,11 +137,11 @@ Setup
 
 ```{r}
 df <- bind_rows(
-  read_csv("../output/k/imp_itt.csv", show_col_types = F, progress = F) |> 
+  read_csv(here("output/k/imp_itt.csv"), show_col_types = F, progress = F) |> 
     mutate(wave = "k"),
-  read_csv("../output/pk/imp_itt.csv", show_col_types = F, progress = F),
+  read_csv(here("output/pk/imp_itt.csv"), show_col_types = F, progress = F),
   read_csv(
-    "../output/equivalence/outcomes.csv", show_col_types = F, progress = F
+    here("output/equivalence/outcomes.csv"), show_col_types = F, progress = F
   ) |>
     filter(mod == "imp", covars) |> 
     mutate(wave = "base")

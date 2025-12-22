@@ -2,14 +2,9 @@
 # Baseline Characteristics & Equivalence Analysis                              #
 #==============================================================================#
 
-if (!require('pak')) install.packages('pak')
-pak::pkg_install(
-  c('this.path', 'tidyr', 'purrr', 'tibble', 'data.table', 'broom', 'fixest')
-)
 library(purrr); library(tibble)
-setwd(this.path::here())
-source('0_functions_analysis.R')  # loads modeling functions
-source('1_data-setup.R')  # runs the data setup script
+source(here('code/0_functions_analysis.R'))  # loads modeling functions
+source(here('code/1_data-setup.R'))  # runs the data setup script
 
 # Baseline Covariate Equivalence ===============================================
 
@@ -41,7 +36,7 @@ res <- df |>  # Add unadjusted means
   relocate(n_ctrl, .after = ctrl_mean_unadj) |> 
   relocate(treat_mean_unadj, .after = n_ctrl) |> 
   relocate(n_treat, .after = treat_mean_unadj)  # Save
-write.csv(res, '../output/equivalence/covariates.csv', na = '', row.names = F)
+write.csv(res, here('output/equivalence/covariates.csv'), na = '', row.names = F)
 
 # Baseline Outcome Equivalence =================================================
 
@@ -59,7 +54,7 @@ res_cc <- pmap(func_params, ~ test_baseline_eq_cc(..1, covrs = ..2, wave = ..3))
   mutate(wave = func_params$wave, covars = func_params$covrs, mod = 'cc')
 
 # Imputed results
-df_list <- list.files('../data/imputed', '_itt', full.names = T) |> 
+df_list <- list.files(here('data/imputed'), '_itt', full.names = T) |> 
   map(readRDS)
 names(df_list) <- c(
   'bdigit_bl', 'fdigit_bl', 'htks_bl', 'puzz_bl', 'sps_bl', 'tom_bl', 
@@ -75,7 +70,7 @@ res_imp <- pmap(
 res_all <- bind_rows(res_cc, res_imp) |> 
   relocate(g, .after = y) |> 
   mutate(wave = if_else(wave == '_k', 'k', 'bl', 'k'))
-write.csv(res_all, '../output/equivalence/outcomes.csv', na = '', row.names = F)
+write.csv(res_all, here('output/equivalence/outcomes.csv'), na = '', row.names = F)
 
 # Save version with full stats
 res_cc_full <- map(outcomes_bl, ~ test_baseline_eq_cc(.x, full_stats = T)) |> 
@@ -87,7 +82,7 @@ res_all_full <- bind_rows(res_cc_full, res_imp_full) |>
   mutate(mod = ifelse(n_ctrl == 346, 'imp', 'cc'))
 write.csv(
   res_all_full, 
-  '../output/equivalence/outcomes_k_full-stats.csv', na = '', row.names = F
+  here('output/equivalence/outcomes_k_full-stats.csv'), na = '', row.names = F
 )
 
 # Baseline All Specs ===========================================================
@@ -132,7 +127,7 @@ res_bl_k_assess <- map2(
   mutate(spec = 'assessed at K & baseline')
 
 # 4: Imputed, full sample
-df_list <- list.files('../data/imputed', '_itt', full.names = T) |> 
+df_list <- list.files(here('data/imputed'), '_itt', full.names = T) |> 
   map(readRDS)
 df_list <- list(  # rearrange
   df_list[[8]], df_list[[7]], df_list[[9]], df_list[[3]], df_list[[2]], 
@@ -177,7 +172,7 @@ write.csv(
   bind_rows(
     res_all_cov, res_bl_assess, res_bl_k_assess, res_imp_all, res_imp_k
   ),
-  '../output/equivalence/all-vars_five-specs.csv', na = '', row.names = F
+  here('output/equivalence/all-vars_five-specs.csv'), na = '', row.names = F
 )
 
 # Ranked Choice Lotteries ======================================================
@@ -202,7 +197,7 @@ res <- map2(  # Get results
     n_treat, coef, se, p , g, g_se, sd_ctrl, sd_treat
   )
 write.csv(
-  res, '../output/equivalence/covariates_no-rank-choice-ltry.csv', 
+  res, here('output/equivalence/covariates_no-rank-choice-ltry.csv'), 
   na = '', row.names = F
 )
 
@@ -226,7 +221,7 @@ res <- map2(  # Get results
     n_treat, coef, se, p , g, g_se, sd_ctrl, sd_treat
   )
 write.csv(
-  res, '../output/equivalence/covariates_rank-choice-ltry-only.csv', 
+  res, here('output/equivalence/covariates_rank-choice-ltry-only.csv'), 
   na = '', row.names = F
 )
 
@@ -281,7 +276,7 @@ bind_rows(
   ) |> 
   arrange(type, mont_offer) |> relocate(type) |> relocate(mont_offer) |> 
   write.csv(
-    '../output/equivalence/miss_assess-by-wave.csv', na = '', row.names = F
+    here('output/equivalence/miss_assess-by-wave.csv'), na = '', row.names = F
   )
 
 ## All Variables Baseline & K --------------------------------------------------
@@ -319,7 +314,7 @@ bind_rows(
     diff = ctrl - treat
   ) |> 
   arrange(y) |> relocate(ctrl, .after = all) |> 
-  write.csv('../output/equivalence/miss_all-bl-k.csv', na = '', row.names = F)
+  write.csv(here('output/equivalence/miss_all-bl-k.csv'), na = '', row.names = F)
 
 ## Complete Cases --------------------------------------------------------------
 
@@ -357,7 +352,7 @@ df |>
   tidyr::pivot_wider(names_from = measure, values_from = c(ctrl, treat)) |> 
   mutate(all_n = ctrl_n + treat_n, all_pct = all_n / 588) |>  # Total N
   relocate(all_n, .after = wave) |> relocate(all_pct, .after = all_n) |> 
-  write.csv('../output/equivalence/miss_cc-k.csv', na = '', row.names = F)
+  write.csv(here('output/equivalence/miss_cc-k.csv'), na = '', row.names = F)
 
 ## Equivalence on Baseline Variables -------------------------------------------
 
@@ -420,7 +415,7 @@ res4 <- map2(
   mutate(spec = "miss k, observe bl")
 
 # 5: Missing K outcome, imputed baseline outcomes
-df_list <- list.files('../data/imputed', 'itt', full.names = T) |>
+df_list <- list.files(here('data/imputed'), 'itt', full.names = T) |>
   map(readRDS)
 df_list <- list(
   df_list[[8]], df_list[[7]], df_list[[9]], df_list[[3]], df_list[[2]], 
@@ -440,5 +435,5 @@ res5 <- pmap(
 
 write.csv(  # Save
   bind_rows(res1, res2, res3, res4, res5),
-  '../output/equivalence/miss_equivalence.csv', na = '', row.names = F
+  here('output/equivalence/miss_equivalence.csv'), na = '', row.names = F
 )

@@ -5,14 +5,9 @@
 #* This script explores school enrollment patterns and their potential influence
 #* on the treatment effects.
 
-if (!require('pak')) install.packages('pak')
-pak::pkg_install(
-  c('tibble', 'purrr', 'fixest', 'tidyr', 'fastDummies', 'TimTeaFan/dplyover')
-)
 library(purrr); library(tibble); library(tidyr)
-setwd(this.path::here())
-source('0_functions_analysis.R')
-source('1_data-setup.R')
+source(here('code/0_functions_analysis.R'))
+source(here('code/1_data-setup.R'))
 
 # School Settings ==============================================================
 
@@ -61,7 +56,7 @@ bind_rows(  # School Type/Sector
   arrange(schl_type) |> 
   select(schl_type, matches('pk3$'), matches('pk4$'), matches('k$')) |> 
   write.csv(
-    '../output/k/exploratory/school-settings_descriptives_type.csv',
+    here('output/k/exploratory/school-settings_descriptives_type.csv'),
     na = '', row.names = F
   )
 
@@ -98,7 +93,7 @@ bind_rows(  # Curriculum - Aggregated
   arrange(schl_curric) |> 
   select(schl_curric, matches('pk3$'), matches('pk4$'), matches('k$')) |> 
   write.csv(
-    '../output/k/exploratory/school-settings_descriptives_curriculum_agg.csv',
+    here('output/k/exploratory/school-settings_descriptives_curriculum_agg.csv'),
     na = '', row.names = F
   )
 
@@ -141,7 +136,7 @@ bind_rows(  # Curriculum - Detailed
   arrange(schl_curric_detail) |> 
   select(schl_curric_detail, matches('pk3$'), matches('pk4$'), matches('k$')) |> 
   write.csv(
-    '../output/k/exploratory/school-settings_descriptives_curriculum_detail.csv',
+    here('output/k/exploratory/school-settings_descriptives_curriculum_detail.csv'),
     na = '', row.names = F
   )
 
@@ -180,7 +175,7 @@ bind_rows(  # Ages in Classroom
   ) |> 
   arrange(schl_class_age_mix) |> 
   write.csv(
-    '../output/k/exploratory/school-settings_descriptives_class-age-mix.csv',
+    here('output/k/exploratory/school-settings_descriptives_class-age-mix.csv'),
     na = '', row.names = F
   )
 
@@ -220,7 +215,7 @@ bind_rows(  # School Span (ie childcare, prek, K+)
   ) |> 
   arrange(schl_span) |> 
   write.csv(
-    '../output/k/exploratory/school-settings_descriptives_span.csv',
+    here('output/k/exploratory/school-settings_descriptives_span.csv'),
     na = '', row.names = F
   )
 
@@ -335,7 +330,7 @@ res <- pmap(  # Run mod
 res_bounds <- map(res, `[[`, 2) |> list_rbind() |>  # Get bounds
   mutate(groups = str_remove_all(as.character(groups), '"|c\\(|\\)'))
 write.csv(  # Save
-  res_bounds, '../output/k/exploratory/principal-strat_bounds_min-max.csv',
+  res_bounds, here('output/k/exploratory/principal-strat_bounds_min-max.csv'),
   na = '', row.names = F
 )
 
@@ -360,7 +355,7 @@ df |>
   rename(treat = V1, ctrl = V2) |> 
   relocate(ctrl, .before = treat) |> 
   write.csv(
-    '../output/k/exploratory/yrs-in-mont_descriptives.csv',
+    here('output/k/exploratory/yrs-in-mont_descriptives.csv'),
     na = '', row.names = F
   )
 
@@ -393,7 +388,7 @@ df |>
   slice(-1) |> 
   select(var, ctrl = V1, treat = V2) |> 
   write.csv(
-    '../output/k/exploratory/school-changes_descriptives_cc.csv',
+    here('output/k/exploratory/school-changes_descriptives_cc.csv'),
     na = '', row.names = F
   )
 
@@ -430,6 +425,6 @@ treat_fx <- map(res, `[[`, 1) |>  # Get treat effect param
   relocate(g, .after = p.value) |> relocate(g_se, .after = g) |> 
   rename(coef = estimate, se = std.error, p = p.value)
 write.csv(  # Save
-  treat_fx, '../output/k/exploratory/school-changes_cc_itt.csv',
+  treat_fx, here('output/k/exploratory/school-changes_cc_itt.csv'),
   na = '', row.names = F
 )
