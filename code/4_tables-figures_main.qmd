@@ -22,7 +22,7 @@ format:
 ---
 
 ::: {.content-hidden}
-Render this file to produce a PDF of the results tables and figure from the main article. Two versions of the figure are produced, a large and a medium-sized version. The resulting PDF will be in the 'output/tables_figures' folder.
+Render this file to produce a PDF of the results tables and figure from the main article.
 :::
 
 ```{r}
@@ -171,7 +171,7 @@ title <- c(
 ```
 
 ::: {.content-hidden}
-## Large
+Plot
 :::
 
 ```{r}
@@ -180,23 +180,6 @@ title <- c(
 #| fig-height: 8.5
 #| fig-width: 7
 plts <- map2(y_regex, title, ~ make_plots_eff_size_trend(.x, .y))
-reduce(plts, `+`) +
-  plot_layout(ncol = 2, axes = "collect")
-```
-
-::: {.content-hidden}
-## Medium
-:::
-
-```{r}
-#| label: fig-effect-size-trends-med
-#| fig-cap: "Outcome Effect Size Differences Between Montessori and Control Students Across Study Waves"
-#| fig-height: 4.48
-#| fig-width: 4.48
-plts <- map2(
-  y_regex, title, 
-  ~ make_plots_eff_size_trend(.x, .y, title_size = 7, med_size = T)
-)
 reduce(plts, `+`) +
   plot_layout(ncol = 2, axes = "collect")
 ```
