@@ -8,19 +8,19 @@ To download the files in this repo, click the green "Code" button toward the top
 
 ## Setup
 
-A one-time setup process must be done to install the packages neede to run the code and create the folders needed to store data and output. The project uses the renv framework to install all the correct versions of packages in a project-specific package library rather than the system-wide library on your computer.
+A one-time setup process must be done to install the packages needed to run the code and create the folders needed to store data and output. The project uses the renv framework to install the correct versions of packages in a project-specific package library rather than the system-wide library on your computer.
 
 There are three options for completing this setup:
 
 ### Option 1: RStudio approach
 
 - Double click the "montessori-rct.Rproj" file. This will open the project in RStudio and automatically begin the process of setting up renv.
-- Then run the "setup.R" either by running "source('setup.R')" in the console or opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" either by running `source('setup.R')` in the console or opening the file and running the script. This will install the packages and create the folders.
 
 ### Option 2: VS Code / Positron approach
 
 - Open the project folder from within VS Code or Positron. This will automatically begin the process of setting up renv.
-- Then run the "setup.R" either by running "source('setup.R')" in the console or opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" either by running `source('setup.R')` in the console or opening the file and running the script. This will install the packages and create the folders.
 
 ### Option 3: Manual renv setup
 
@@ -35,8 +35,8 @@ There are three options for completing this setup:
 Each time you work with the project code, renv must be activated so that the session uses the project-specific package library. To do this, you just take the same initial step that you took in the setup, i.e. either
 
 - double click "montessori-rct.Rproj",
-- open the project within the VS Code or Positron,
-- or call `renv::activate('/insert/path/to/project/folder')` then restart the R session.
+- open the project from within VS Code or Positron,
+- or run `renv::activate('/insert/path/to/project/folder')` then restart the R session.
 
 ## Code files overview
 
@@ -44,17 +44,17 @@ The numeric prefix for each script indicates the general order in which scripts 
 
 ## Running the code
 
-For the other scripts, the first step to running the code is always to run the setup directly below the script title, where package, data and function loading and any other setup is handled. The code is then broken into sections, with section and sub-section hierarchies denoted by the number of `#` at the beginning of the section title. All code necessary to run a given section is contained within that section. To run code in a sub-section, make sure to first run all code in its "parent" section(s).
+The first step to running the code is always to run the setup directly below the script title, where package, data and function loading and any other setup is handled. The code is then broken into sections, with section and sub-section hierarchies denoted by the number of `#` at the beginning of the section title. All code necessary to run a given section is contained within that section. To run code in a sub-section, make sure to first run all code in its "parent" section(s).
 
 ## Data
 
-The data needed for replication is available at the project's [Open Science Framework page](https://osf.io/cp8xg/overview). Download the data and save it in the 'data' folder that the folder setup script creates.
+The data needed for replication is available at the project's [Open Science Framework page](https://osf.io/cp8xg/overview). Download the data and save it in the 'data' folder that the setup script creates.
 
 ## Software requirements
 
 ### R
 
-The R programming language must be installed to run the scripts. We recommend also installing RStudio, a user-friendly software that greatly eases working with R. Both are free and can be [downloaded here](https://posit.co/download/rstudio-desktop/).
+The R programming language must be installed to run the scripts. We recommend also installing RStudio, a user-friendly software for working with R. Both are free and can be [downloaded here](https://posit.co/download/rstudio-desktop/).
 
 ### Quarto
 
