@@ -12,20 +12,21 @@ A one-time setup process must be done to install the packages needed to run the 
 
 There are three options for completing this setup:
 
-### Option 1: RStudio approach
+### Option 1: RStudio
 
 - Double click the "montessori-rct.Rproj" file. This will open the project in RStudio and automatically begin the process of setting up renv.
-- Then run the "setup.R" either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" script either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
 
-### Option 2: VS Code / Positron approach
+### Option 2: VS Code / Positron
 
 - Open the project folder from within VS Code or Positron. This will automatically begin the process of setting up renv.
-- Then run the "setup.R" either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
+- Then run the "setup.R" script either by (a) running `source('setup.R')` in the console or (b) opening the file and running the script. This will install the packages and create the folders.
 
 ### Option 3: Manual renv setup
 
 - Open the "setup.R" script.
 - Uncomment the call to `setwd()`, insert the file path the project folder on your computer, and run.
+- Uncomment and run the next line of code; it checks to see if you have the {renv} package installed on your computer and, if not, installs it. (This is the only system-wide package installation required.)
 - Uncomment `renv::activate()` and run.
 - Restart your R session.
 - Run the rest of the "setup.R" script.
@@ -36,11 +37,11 @@ Each time you work with the project code, renv must be activated so that the ses
 
 - double click "montessori-rct.Rproj",
 - open the project from within VS Code or Positron,
-- or run `renv::activate('/insert/path/to/project/folder')` then restart the R session.
+- or `setwd()` to the project folder on your computer, run `renv::activate()`, and restart the R session.
 
 ## Code files overview
 
-All project code is located in the "code" folder. The numeric prefix for each script indicates the general order in which scripts should be run. The '0' and '1' scripts are run at the beginning of the subsequent scripts as needed, so you will not need to open and run those scripts directly. The '2' scripts perform multiple imputation and save imputed datasets. You will need to run these directly before conducting analyses that use the multiply-imputed data. The '3' scripts perform all analyses, broken into four categories: 'equivalence' examines equivalence between treatment and control groups; 'impact' has the main impact analyses; 'impact_sensitivity' has sensitivity analyses for the main impact analyses; and 'impact_exploratory' has exploratory analyses that follow up on the main impact analyses. The '4' file is a Quarto file that produces results tables and figures (more details below) and the '\_quarto.yml' file sets its output folder.
+All project code is located in the "code" folder. The numeric prefix for each script indicates the general order in which scripts should be run. The '0' and '1' scripts are run at the beginning of the subsequent scripts as needed, so you will not need to open and run those scripts directly. The '2' scripts perform multiple imputation and save imputed datasets. You will need to run these directly before conducting analyses that use the multiply-imputed data. The '3' scripts perform all analyses, broken into four categories: 'equivalence' examines equivalence between treatment and control groups; 'impact' has the main impact analyses; 'impact_sensitivity' has sensitivity analyses for the main impact analyses; and 'impact_exploratory' has exploratory analyses that follow up on the main impact analyses. The '4' files are Quarto files (more details below) that produce results tables and figures, and the '\_quarto.yml' file sets their output folder.
 
 ## Running the code
 

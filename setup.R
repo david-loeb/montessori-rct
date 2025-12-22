@@ -7,6 +7,7 @@
 
 # Uncomment & run code below if setting up via option 3 (see README instructions)
 # setwd('insert/path/to/current/folder/here')
+# if (!requireNamespace('renv')) install.packages('renv')
 # renv::activate()
 
 renv::restore(prompt = FALSE)  # Install packages to complete creating renv

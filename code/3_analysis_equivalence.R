@@ -3,8 +3,8 @@
 #==============================================================================#
 
 library(purrr); library(tibble)
-source(here('code/0_functions_analysis.R'))  # loads modeling functions
-source(here('code/1_data-setup.R'))  # runs the data setup script
+source(here::here('code/0_functions_analysis.R'))  # loads modeling functions
+source(here::here('code/1_data-setup.R'))  # runs the data setup script
 
 # Baseline Covariate Equivalence ===============================================
 

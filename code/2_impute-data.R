@@ -9,8 +9,8 @@
 #* because they are smaller than alternatives like CSV. However you can save 
 #* them in any tabular data format you like.
 
-source(here('code/0_functions_analysis.R'))
-source(here('code/1_data-setup.R'))
+source(here::here('code/0_functions_analysis.R'))
+source(here::here('code/1_data-setup.R'))
 df <- select(df, where(is.numeric))  # Blimp requires all variables be numeric
 covars <- c(covariates[1:4], 'race_num', covariates[5:10])
 
