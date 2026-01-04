@@ -25,7 +25,7 @@ There are three options for completing this setup:
 ### Option 3: Manual renv setup
 
 - Open the "setup.R" script.
-- Uncomment the call to `setwd()`, insert the file path the project folder on your computer, and run.
+- Uncomment the call to `setwd()`, insert the file path to the project folder on your computer, and run.
 - Uncomment and run the next line of code; it checks to see if you have the {renv} package installed on your computer and, if not, installs it. (This is the only system-wide package installation required.)
 - Uncomment `renv::activate()` and run.
 - Restart your R session.
