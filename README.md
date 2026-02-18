@@ -57,7 +57,7 @@ The data needed for replication is available at the project's [Open Science Fram
 
 The R programming language must be installed to run the scripts. We recommend also installing RStudio, a user-friendly software for working with R. Both are free and can be [downloaded here](https://posit.co/download/rstudio-desktop/). 
 
-R version 4.4.2 was used for this project; while other versions may work fine, you will be least likely to encounter unforeseen issues if you use version 4.4.2. Specific versions of R can be easily installed using the `rig` R package installer. [Download `rig` here](https://github.com/r-lib/rig?tab=readme-ov-file#id-installation). To install R 4.4.2, type `rig add 4.4.2` in your computer's terminal. You can then choose to use this version of R by either setting it as your default with `rig default 4.4.2` in the terminal, or by changing the version temporarily for your specific R session, for example in RStudio's Global Options menu.
+R version 4.4.2 was used for this project; while other versions may work fine, you will be least likely to encounter unforeseen issues if you use version 4.4.2. Specific versions of R can be easily installed using the `rig` R installer. [Download rig here](https://github.com/r-lib/rig?tab=readme-ov-file#id-installation). To install R 4.4.2, type `rig add 4.4.2` in your computer's terminal. You can then choose to use this version of R by either setting it as your default with `rig default 4.4.2` in the terminal, or by changing the version temporarily for your specific R session, for example in RStudio's Global Options menu.
 
 ### Quarto
 
